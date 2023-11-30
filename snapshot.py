@@ -52,15 +52,11 @@ def get_even_positive_input():
         screen.blit(input_prompt, (50, 100))
 
         pg.display.flip()
-<<<<<<< HEAD
-        
-=======
 
 def load_and_scale_image(image_path, target_size):
     image = pg.image.load(image_path)
     return pg.transform.scale(image, target_size)
 
->>>>>>> 07ef51d56b2c3d0a017bff32089d7203f75e94f2
 if __name__ == '__main__':
 
     n = get_even_positive_input()
@@ -70,7 +66,7 @@ if __name__ == '__main__':
     BLACK = pg.Color(192, 192, 192)
     WHITE = pg.Color(105, 105, 105)
 
-    screen = pg.display.set_mode((1920, 1080))
+    screen = pg.display.set_mode((1280, 720))
     clock = pg.time.Clock()
 
     colors = itertools.cycle((WHITE, BLACK))
@@ -87,6 +83,9 @@ if __name__ == '__main__':
         for x in range(0, width, tile_size):
             rect = (x, y, tile_size, tile_size)
             pg.draw.rect(background, next(colors), rect)
+            if((x+y)%2==0):
+                pass#background.blit(blackchip, (x, y))
+                # stack pointer spot
             if y > 0:
                 if y < height-tile_size:
                     if (y - 1) % 2 == 0:
