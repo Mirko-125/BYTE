@@ -1,10 +1,7 @@
 import itertools
 
-import pygame
 import pygame as pg
 import sys
-from PIL import Image, ImageTk
-import tkinter as tk
 
 def get_even_positive_input():
     pg.init()
