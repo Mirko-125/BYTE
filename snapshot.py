@@ -1,10 +1,8 @@
 import itertools
-
-import pygame
 import pygame as pg
 import sys
-from PIL import Image, ImageTk
-import tkinter as tk
+
+#import graphFromMilos
 
 def get_even_positive_input():
     pg.init()
@@ -57,10 +55,8 @@ def load_and_scale_image(image_path, target_size):
     image = pg.image.load(image_path)
     return pg.transform.scale(image, target_size)
 
-if __name__ == '__main__':
-
+def mainBoard(stack):
     n = get_even_positive_input()
-
     pg.init()
 
     BLACK = pg.Color(192, 192, 192)
@@ -79,12 +75,15 @@ if __name__ == '__main__':
     blackchip = load_and_scale_image("black-chip.png", (tile_size, tile_size))
     whitechip = load_and_scale_image("white-chip.png", (tile_size, tile_size))
 
+    c = 1
     for y in range(0, height, tile_size):
         for x in range(0, width, tile_size):
             rect = (x, y, tile_size, tile_size)
             pg.draw.rect(background, next(colors), rect)
             if((x+y)%2==0):
-                pass#background.blit(blackchip, (x, y))
+                stackPointer = stack #graph[c][1]
+                print(c)
+                c += 1
                 # stack pointer spot
             if y > 0:
                 if y < height-tile_size:
@@ -111,3 +110,11 @@ if __name__ == '__main__':
         clock.tick(30)
 
     pg.quit()
+
+if __name__ == '__main__':
+    graph = {
+        #[]
+    }
+    stack = [0]
+
+    mainBoard(stack)
