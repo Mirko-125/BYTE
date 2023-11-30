@@ -48,7 +48,7 @@ def get_even_positive_input():
         screen.blit(input_prompt, (50, 100))
 
         pg.display.flip()
-
+        
 if __name__ == '__main__':
 
     n = get_even_positive_input()
