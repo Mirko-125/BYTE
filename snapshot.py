@@ -3,17 +3,18 @@ import pygame as pg
 import sys
 from graphConstants import graphStack
 import random
-def drawChips(background,black,white,x,y,stack):
+
+def drawChips(interfaceTools,stack):
     offset = 0
     for element in stack.list:
-        drawChip(background,black,white,x+random.randint(-2, 2),y-offset,element)
+        drawChip(interfaceTools,stack.x+random.randint(-2, 2),stack.y-offset,element)
         offset += 13
-def drawChip(background,black,white,x,y,element):
+def drawChip(interfaceTools,x,y,element):
     print(element)
     if element == 'Black':
-        background.blit(black, (x,y))
+        interfaceTools.background.blit(interfaceTools.blackChip, (x,y))
     else:
-        background.blit(white, (x,y))
+        interfaceTools.background.blit(interfaceTools.whiteChip, (x,y))
 
 def getEvenPositiveInput():
     pg.init()
@@ -67,8 +68,21 @@ def loadAndScaleImage(imagePath, targetSize):
     image = pg.image.load(imagePath)
     return pg.transform.scale(image, targetSize)
 
+class InterfaceTools:
+    _instance = None  # Class variable to store the instance
 
-def mainBoard(graph, n):
+    def __new__(cls, n):
+        if cls._instance is None:
+            cls._instance = super(InterfaceTools, cls).__new__(cls)
+            cls._instance.tileSize = 75
+            cls._instance.blackChip = loadAndScaleImage("./Assets/black-chip.png", (cls._instance.tileSize, cls._instance.tileSize))
+            cls._instance.whiteChip = loadAndScaleImage("./Assets/white-chip.png", (cls._instance.tileSize, cls._instance.tileSize))
+            cls._instance.width = n * cls._instance.tileSize
+            cls._instance.height = n * cls._instance.tileSize
+            cls._instance.background = pg.Surface((cls._instance.width, cls._instance.height))
+        return cls._instance
+
+def mainBoard(graph, interfaceTools):
     pg.init()
 
     black = pg.Color(192, 192, 192)
@@ -78,27 +92,20 @@ def mainBoard(graph, n):
     clock = pg.time.Clock()
 
     colors = itertools.cycle((white, black))
-    tileSize = 75
-
-    width, height = n * tileSize, n * tileSize
-    background = pg.Surface((width, height))
-
-    blackChip = loadAndScaleImage("./Assets/black-chip.png", (tileSize, tileSize))
-    whiteChip = loadAndScaleImage("./Assets/white-chip.png", (tileSize, tileSize))
 
     c = 1
-    for y in range(0, height, tileSize):
-        for x in range(0, width, tileSize):
-            rect = (x, y, tileSize, tileSize)
-            pg.draw.rect(background, next(colors), rect)
+    for y in range(0, interfaceTools.height, interfaceTools.tileSize):
+        for x in range(0, interfaceTools.width, interfaceTools.tileSize):
+            rect = (x, y, interfaceTools.tileSize, interfaceTools.tileSize)
+            pg.draw.rect(interfaceTools.background, next(colors), rect)
             if (x + y) % 2 == 0:
                 stackPointer = graph[c][graphStack]  # graph[c][1]
+                stackPointer.setCoordinates(x,y)
                 print(c)
-                print(stackPointer) #drawPieces(background,whiteChip,blackChip,(x,y),stackPointer)
-                drawChips(background,blackChip,whiteChip,x,y,stackPointer)
+                print(stackPointer)
+                drawChips(interfaceTools,stackPointer)
                 c += 1
                 # stack pointer spot
-
         next(colors)
 
     gameExit = False
@@ -108,7 +115,7 @@ def mainBoard(graph, n):
                 gameExit = True
 
         screen.fill((60, 70, 90))
-        screen.blit(background, (300, 80))
+        screen.blit(interfaceTools.background, (300, 80))
 
         pg.display.flip()
         clock.tick(30)

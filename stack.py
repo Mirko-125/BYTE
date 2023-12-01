@@ -2,6 +2,8 @@ from piece import Piece
 
 class Stack:
     def __init__(self, element):
+        self.x = 0
+        self.y = 0
         self.max = 7
         self.list = [element] if element else []
 
@@ -22,6 +24,9 @@ class Stack:
     
     def pop(self, count):
         return [self.list.pop() for _ in range(count)]
-    
+
+    def setCoordinates(self, x, y):
+        self.x = x
+        self.y = y
     def __str__(self):
         return str(self.list)
