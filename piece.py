@@ -4,3 +4,6 @@ class Piece:
             self.color = color
         else:
             raise ValueError("Invalid color. Must be 'Black' or 'White'.")
+        
+    def __str__(self):
+        return f"{self.color}"

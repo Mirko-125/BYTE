@@ -1,0 +1,2 @@
+neighborNodes = 'neighborNodes'
+graphStack = 'stack'
