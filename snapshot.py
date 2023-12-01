@@ -1,7 +1,7 @@
 import itertools
 import pygame as pg
 import sys
-
+from graphConstants import graphStack
 
 def getEvenPositiveInput():
     pg.init()
@@ -56,8 +56,7 @@ def loadAndScaleImage(imagePath, targetSize):
     return pg.transform.scale(image, targetSize)
 
 
-def mainBoard(stack):
-    n = getEvenPositiveInput()
+def mainBoard(graph, n):
     pg.init()
 
     black = pg.Color(192, 192, 192)
@@ -81,8 +80,9 @@ def mainBoard(stack):
             rect = (x, y, tileSize, tileSize)
             pg.draw.rect(background, next(colors), rect)
             if (x + y) % 2 == 0:
-                stackPointer = stack  # graph[c][1]
+                stackPointer = graph[c][graphStack]  # graph[c][1]
                 print(c)
+                print(stackPointer)
                 c += 1
                 # stack pointer spot
             if y > 0:
@@ -110,12 +110,3 @@ def mainBoard(stack):
         clock.tick(30)
 
     pg.quit()
-
-
-if __name__ == '__main__':
-    graph = {
-        # []
-    }
-    stack = [0]
-
-    mainBoard(stack)

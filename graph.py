@@ -3,9 +3,9 @@ from stack import Stack
 from graphConstants import neighborNodes, graphStack
 
 class Graph:
-    def __init__(self, N, K):
+    def __init__(self, N):
         self.N = N
-        self.K = K
+        self.K = 1
         self.size = int(N**2 / 2) 
         self.offset = int(N/2)
         self.oddRange = set()
@@ -84,13 +84,6 @@ class Graph:
         for key in range(secondIteration, finalIteration):
             self.nodes[key][neighborNodes].extend([self.UL(key), self.UR(key)])
         self.nodes[key+1][neighborNodes].append(self.UL(key + 1))
-N = 8
-K = 1
-graph = Graph(N, K)
-graph.createTable()
-
-for key, value in graph.nodes.items():
-    print(f"Node {key}: {value[neighborNodes]}, {value[graphStack]}")
 
 #graph.move(9, 1, graph.DL)
 #graph.move(13, 2, graph.DR)
