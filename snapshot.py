@@ -71,8 +71,8 @@ def mainBoard(graph, n):
     width, height = n * tileSize, n * tileSize
     background = pg.Surface((width, height))
 
-    blackChip = loadAndScaleImage("black-chip.png", (tileSize, tileSize))
-    whiteChip = loadAndScaleImage("white-chip.png", (tileSize, tileSize))
+    blackChip = loadAndScaleImage("./Assets/black-chip.png", (tileSize, tileSize))
+    whiteChip = loadAndScaleImage("./Assets/white-chip.png", (tileSize, tileSize))
 
     c = 1
     for y in range(0, height, tileSize):
