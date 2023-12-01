@@ -3,6 +3,24 @@ import pygame as pg
 import sys
 from graphConstants import graphStack
 
+'''
+beta function
+def drawPieces(background, white, black, coordinates, stack):
+    for element in stack:
+        #cord.z += 0
+        if (element.color == "White"):
+            background.blit(white, coordinates)
+        else:
+            background.blit(black, coordinates)
+'''
+def drawChip(background,black,white,x,y,stack):
+    if not stack.list:
+        pass
+    elif stack.list[-1] == 'Black':
+        background.blit(black, (x,y))
+    elif stack.list[-1] == 'White':
+        background.blit(white, (x, y))
+
 def getEvenPositiveInput():
     pg.init()
 
@@ -82,19 +100,11 @@ def mainBoard(graph, n):
             if (x + y) % 2 == 0:
                 stackPointer = graph[c][graphStack]  # graph[c][1]
                 print(c)
-                print(stackPointer)
+                print(stackPointer) #drawPieces(background,whiteChip,blackChip,(x,y),stackPointer)
+                drawChip(background,blackChip,whiteChip,x,y,stackPointer)
                 c += 1
                 # stack pointer spot
-            if y > 0:
-                if y < height - tileSize:
-                    if (y - 1) % 2 == 0:
-                        if (x - 1) % 2 == 0:
-                            background.blit(blackChip, (x, y))
-            if y > 0:
-                if y < height - tileSize:
-                    if y % 2 == 0:
-                        if x % 2 == 0:
-                            background.blit(whiteChip, (x, y))
+
         next(colors)
 
     gameExit = False
