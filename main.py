@@ -11,16 +11,12 @@ if __name__ == '__main__':
     n = getEvenPositiveInput()
     graph = Graph(n)
     graph.createTable()
-    graph.nodes[5][graphStack].add([Piece('Black').color])
-    graph.nodes[5][graphStack].add([Piece('White').color])
-    graph.nodes[5][graphStack].add([Piece('White').color])
-    graph.nodes[5][graphStack].add([Piece('Black').color])
-    graph.nodes[5][graphStack].add([Piece('White').color])
-    graph.nodes[5][graphStack].add([Piece('White').color])
+    graph.move(5, 1, graph.DR)
+    graph.move(5, 1, 12)
 
     for key, value in graph.nodes.items():
         print(f"Node {key}: {value[neighborNodes]}, {value[graphStack]}")
 
     interfaceTools = InterfaceTools(n)
     mainBoard(graph.nodes,interfaceTools)
-    stackMove(graph, 5, 4, graph.DR, interfaceTools)
+    #stackMove(graph, 5, 4, graph.DR, interfaceTools)

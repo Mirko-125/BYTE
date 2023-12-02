@@ -51,6 +51,21 @@ class Graph:
             graph[key] = {neighborNodes: [], graphStack: Stack(False)}
         return graph
     
+    def validateKey(self, key):
+        if (key > 0 and key <= self.size):
+            return True
+        raise ValueError("The field does not exist")
+    
+    def validateStack(self, key):
+        if (self.nodes[key][graphStack].isEmpty()):
+            raise MemoryError("The stack is empty")
+        return True
+    
+    def validateDirection(self, direction):
+        if (direction == self.UR or self.UL or self.DR or self.DL):
+            return True
+        raise ValueError("The direction is invalid")
+    
     def move(self, key, count, direction):
         if (key > 0 and key <= self.size):
             newKey = direction(key)
