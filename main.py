@@ -14,7 +14,7 @@ if __name__ == '__main__':
     n = getEvenPositiveInput()
     graph = Graph(n)
     graph.createTable()
-    graph.move(5, 1, graph.DR)
+    # graph.move(5, 1, graph.DR) # pomeranje u dijagonalu sa polja 10 na polje dole desno od njega
     whitePlayer = Player("White")
     blackPlayer = Player("Black")
     whitePlayer.addPoints(2)
