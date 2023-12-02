@@ -62,7 +62,8 @@ class Graph:
         return True
     
     def validateDirection(self, direction):
-        if (direction == self.UR or self.UL or self.DR or self.DL):
+        validDirections = [self.UR, self.UL, self.DL, self.DR]
+        if direction in validDirections:
             return True
         raise ValueError("The direction is invalid")
     

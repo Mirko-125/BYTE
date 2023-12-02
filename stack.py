@@ -20,7 +20,7 @@ class Stack:
         return 0
 
     def isEmpty(self):
-        return len(self.list == 0)
+        return len(self.list) == 0
     
     def pop(self, count):
         return [self.list.pop() for _ in range(count)]
