@@ -67,6 +67,9 @@ class Graph:
         raise ValueError("The direction is invalid")
     
     def move(self, key, count, direction):
+        self.validateKey(key)
+        self.validateStack(key)
+        self.validateDirection(direction)
         if (key > 0 and key <= self.size):
             newKey = direction(key)
             if (newKey in self.nodes[key][neighborNodes]):
