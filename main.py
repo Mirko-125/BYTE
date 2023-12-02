@@ -12,7 +12,7 @@ if __name__ == '__main__':
     graph = Graph(n)
     graph.createTable()
     graph.move(5, 1, graph.DR)
-    graph.move(5, 1, 12)
+    graph.move(9, 1, graph.UR)
 
     for key, value in graph.nodes.items():
         print(f"Node {key}: {value[neighborNodes]}, {value[graphStack]}")
