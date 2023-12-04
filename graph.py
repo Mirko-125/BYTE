@@ -60,7 +60,11 @@ class Graph:
         if (self.nodes[key][graphStack].isEmpty()):
             raise MemoryError("The stack is empty")
         return True
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> 6a521bf92c99067409a7bbcd8b702af45c814f3e
     def validateDirection(self, direction, key):
         validDirections = [self.UR, self.UL, self.DL, self.DR]
         if direction in validDirections:
@@ -68,15 +72,22 @@ class Graph:
             if (newKey in self.nodes[key][neighborNodes]):
                 return True
         raise ValueError("The direction is invalid")
-    
+
     def move(self, key, count, direction):
         self.validateKey(key)
         self.validateStack(key)
         self.validateDirection(direction, key)
+<<<<<<< HEAD
         
         newKey = direction(key)
         return self.nodes[newKey][graphStack].add(self.nodes[key][graphStack].pop(count))
         
+=======
+
+        newKey = direction(key)
+        return self.nodes[newKey][graphStack].add(self.nodes[key][graphStack].pop(count))
+
+>>>>>>> 6a521bf92c99067409a7bbcd8b702af45c814f3e
     def createTable(self):
         firstIteration = int(self.N/2) + 1
         secondIteration = int(self.N**2 / 2 - self.N/2) + 1
