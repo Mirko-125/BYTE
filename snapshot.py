@@ -95,12 +95,13 @@ class InterfaceTools:
             cls._instance.background = pg.Surface((cls._instance.width, cls._instance.height))
         return cls._instance
 
-def movementHandle(c, stack):
+def movementHandle(c, stack, graph):
     state = False  # False je state 1, True je state 2
     if not stack.isEmpty():
         state = True
+        print(graph[c])
         while state:
-            pass
+            state = False
     pass
 def mainBoard(graph, interfaceTools):
     pg.init()
@@ -154,7 +155,7 @@ def mainBoard(graph, interfaceTools):
                                 print("Rect clicked at:", x, y)
                                 print(f"Key being {rectInfo['nodeKey']}")
                                 # nacrtati highlight oko selektovanog polja
-                                movementHandle(rectInfo['nodeKey'], stackPointer)
+                                movementHandle(rectInfo['nodeKey'], stackPointer,graph)
                                 # kad kliknem rectangle
                                 # pitam unutar funkcije da li je state 1 ili state 2
                                 # stateove napravim kao neki boolean check
