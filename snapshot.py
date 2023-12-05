@@ -16,6 +16,18 @@ def drawChip(interfaceTools,x,y,element):
     else:
         interfaceTools.background.blit(interfaceTools.whiteChip, (x,y))
 
+def parseCoordinates(coordinates, offsetMultiplier, N):
+    return (
+        coordinateParse(coordinates.x, offsetMultiplier),
+        coordinateParse(coordinates.y, offsetMultiplier, N)
+    )
+
+def coordinateParse(coordinate, offsetMultiplier, multiplier = 1):
+    return multiplier * (coordinate / offsetMultiplier)
+
+def parseCoordinatesIntoKey(coordinates):
+    return (coordinates.x + coordinates.y + 1) / 2
+
 def getEvenPositiveInput():
     pg.init()
 
@@ -116,7 +128,7 @@ def mainBoard(graph, interfaceTools):
 
         screen.fill((60, 70, 90))
         screen.blit(interfaceTools.background, (300, 80))
-
+        
         pg.display.flip()
         clock.tick(30)
 
