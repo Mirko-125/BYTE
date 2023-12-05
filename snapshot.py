@@ -115,7 +115,7 @@ def mainBoard(graph, interfaceTools):
                 gameExit = True
 
         screen.fill((60, 70, 90))
-        screen.blit(interfaceTools.background, (300, 80))
+        screen.blit(interfaceTools.background, (0, 0))
 
         pg.display.flip()
         clock.tick(30)
