@@ -1,7 +1,8 @@
 import itertools
 import pygame as pg
 import sys
-from graphConstants import graphStack
+from graphConstants import graphStack # graph ih vec poziva
+from graph import *
 import random
 
 def drawChips(interfaceTools,stack):
@@ -74,7 +75,7 @@ def getEvenPositiveInput():
         screen.blit(inputPrompt, (50, 100))
 
         pg.display.flip()
-
+# napraviti za univerzalne velicine
 
 def loadAndScaleImage(imagePath, targetSize):
     image = pg.image.load(imagePath)
@@ -94,10 +95,15 @@ class InterfaceTools:
             cls._instance.background = pg.Surface((cls._instance.width, cls._instance.height))
         return cls._instance
 
+def movementHandle(c, stack):
+    state = False  # False je state 1, True je state 2
+    if not stack.isEmpty():
+        state = True
+        while state:
+            pass
+    pass
 def mainBoard(graph, interfaceTools):
     pg.init()
-
-    rectangleInfo = {}
 
     black = pg.Color(192, 192, 192)
     white = pg.Color(105, 105, 105)
@@ -136,6 +142,10 @@ def mainBoard(graph, interfaceTools):
                         if (x+y)%2==0:
                             rectInfo = {}
                             rect = pg.Rect(x, y, interfaceTools.tileSize, interfaceTools.tileSize)
+
+                            stackPointer = graph[c][graphStack]  # graph[c][1]
+                            stackPointer.setCoordinates(x, y)
+
                             rectInfo["rect"] = rect
                             rectInfo["nodeKey"] = c
                             c+=1
@@ -143,6 +153,12 @@ def mainBoard(graph, interfaceTools):
                                 # Rect clicked
                                 print("Rect clicked at:", x, y)
                                 print(f"Key being {rectInfo['nodeKey']}")
+                                # nacrtati highlight oko selektovanog polja
+                                movementHandle(rectInfo['nodeKey'], stackPointer)
+                                # kad kliknem rectangle
+                                # pitam unutar funkcije da li je state 1 ili state 2
+                                # stateove napravim kao neki boolean check
+
 
 
         screen.fill((60, 70, 90))
