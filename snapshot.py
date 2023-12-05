@@ -16,6 +16,18 @@ def drawChip(interfaceTools,x,y,element):
     else:
         interfaceTools.background.blit(interfaceTools.whiteChip, (x,y))
 
+def parseCoordinates(coordinates, offsetMultiplier, N):
+    return (
+        coordinateParse(coordinates.x, offsetMultiplier),
+        coordinateParse(coordinates.y, offsetMultiplier, N)
+    )
+
+def coordinateParse(coordinate, offsetMultiplier, multiplier = 1):
+    return multiplier * (coordinate / offsetMultiplier)
+
+def parseCoordinatesIntoKey(coordinates):
+    return (coordinates.x + coordinates.y + 1) / 2
+
 def getEvenPositiveInput():
     pg.init()
 
@@ -85,6 +97,8 @@ class InterfaceTools:
 def mainBoard(graph, interfaceTools):
     pg.init()
 
+    rectangleInfo = {}
+
     black = pg.Color(192, 192, 192)
     white = pg.Color(105, 105, 105)
 
@@ -108,16 +122,27 @@ def mainBoard(graph, interfaceTools):
                 # stack pointer spot
         next(colors)
 
-    gameExit = False
-    while not gameExit:
+    running = True
+    while running:
         for event in pg.event.get():
             if event.type == pg.QUIT:
-                gameExit = True
+                running = False
+            elif event.type == pg.MOUSEBUTTONDOWN and event.button == 1:  # Left mouse button clicked
+                mouse_x, mouse_y = pg.mouse.get_pos()
+
+                for y in range(10, interfaceTools.height, interfaceTools.tileSize):
+                    for x in range(10, interfaceTools.width, interfaceTools.tileSize):
+                        rect = pg.Rect(x, y, interfaceTools.tileSize, interfaceTools.tileSize)
+
+                        if rect.collidepoint(mouse_x, mouse_y):
+                            # Rect clicked
+                            print("Rect clicked at:", x, y)
+
 
         screen.fill((60, 70, 90))
-        screen.blit(interfaceTools.background, (0, 0))
-
+        screen.blit(interfaceTools.background, (10, 10))
+        
         pg.display.flip()
-        clock.tick(30)
+        clock.tick(60)
 
     pg.quit()
