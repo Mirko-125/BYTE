@@ -133,15 +133,16 @@ def mainBoard(graph, interfaceTools):
 
                 for y in range(10, interfaceTools.height, interfaceTools.tileSize):
                     for x in range(10, interfaceTools.width, interfaceTools.tileSize):
-                        rectInfo = {}
-                        rect = pg.Rect(x, y, interfaceTools.tileSize, interfaceTools.tileSize)
-                        rectInfo["rect"] = rect
-                        rectInfo["nodeKey"] = c
-
-                        if rectInfo["rect"].collidepoint(mouse_x, mouse_y):
-                            # Rect clicked
-                            print("Rect clicked at:", x, y)
-                            print(f"Key being {rectInfo['nodeKey']}")
+                        if (x+y)%2==0:
+                            rectInfo = {}
+                            rect = pg.Rect(x, y, interfaceTools.tileSize, interfaceTools.tileSize)
+                            rectInfo["rect"] = rect
+                            rectInfo["nodeKey"] = c
+                            c+=1
+                            if rectInfo["rect"].collidepoint(mouse_x, mouse_y):
+                                # Rect clicked
+                                print("Rect clicked at:", x, y)
+                                print(f"Key being {rectInfo['nodeKey']}")
 
 
         screen.fill((60, 70, 90))
