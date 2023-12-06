@@ -135,12 +135,12 @@ class Graph:
             raise ValueError("Invalid direction")
 
         newKey = direction(key)
-        if (self.isLegalMove(key, newKey)):
-            for neighborNode in self.nodes[key][neighborNodes]:
-                self.updateLegalMoves(neighborNode)
-            for neighborNode in self.nodes[newKey][neighborNodes]:
-                self.updateLegalMoves(neighborNode)
-            return self.nodes[newKey][graphStack].add(self.nodes[key][graphStack].pop(count))
+        #if (self.isLegalMove(key, newKey)):
+            #for neighborNode in self.nodes[key][neighborNodes]:
+            #    self.updateLegalMoves(neighborNode)
+            #for neighborNode in self.nodes[newKey][neighborNodes]:
+            #    self.updateLegalMoves(neighborNode)
+        return self.nodes[newKey][graphStack].add(self.nodes[key][graphStack].pop(count))
         return False
         
 

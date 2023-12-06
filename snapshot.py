@@ -8,10 +8,12 @@ import random
 def drawChips(interfaceTools,stack):
     offset = 0
     for element in stack.list:
-        drawChip(interfaceTools,stack.x+random.randint(-2, 2),stack.y-offset,element)
+        if len(stack.list) == 1:
+            drawChip(interfaceTools, stack.x, stack.y - offset, element)
+        else:
+            drawChip(interfaceTools,stack.x+random.randint(-2, 2),stack.y-offset,element)
         offset += 13
 def drawChip(interfaceTools,x,y,element):
-    print(element)
     if element == 'Black':
         interfaceTools.background.blit(interfaceTools.blackChip, (x,y))
     else:
@@ -75,7 +77,6 @@ def getEvenPositiveInput():
         screen.blit(inputPrompt, (50, 100))
 
         pg.display.flip()
-# napraviti za univerzalne velicine
 
 def loadAndScaleImage(imagePath, targetSize):
     image = pg.image.load(imagePath)
@@ -95,13 +96,57 @@ class InterfaceTools:
             cls._instance.background = pg.Surface((cls._instance.width, cls._instance.height))
         return cls._instance
 
-def movementHandle(c, stack, graph):
-    state = False  # False je state 1, True je state 2
-    if not stack.isEmpty():
-        state = True
-        print(graph[c])
-        while state:
-            state = False
+def drawTable(graph,interfaceTools):
+
+    black = pg.Color(192, 192, 192)
+    white = pg.Color(105, 105, 105)
+
+    colors = itertools.cycle((white, black))
+
+    c = 1
+    for y in range(0, interfaceTools.height, interfaceTools.tileSize):
+        for x in range(0, interfaceTools.width, interfaceTools.tileSize):
+            rect = (x, y, interfaceTools.tileSize, interfaceTools.tileSize)
+            pg.draw.rect(interfaceTools.background, next(colors), rect)
+            if (x + y) % 2 == 0:
+                stackPointer = graph.nodes[c][graphStack]  # graph[c][1]
+                stackPointer.setCoordinates(x, y)
+                drawChips(interfaceTools, stackPointer)
+                c += 1
+                # stack pointer spot
+        next(colors)
+
+def movementHandle(c, stack, graph, state, interfaceTools):
+    # False je state 1, True je state 2
+    if not stack.isEmpty() and state:
+        # Use legalMoves to return all keys with valid places to move
+        # Use those keys to highlight appropriate rectangles on the field
+        state = False
+        while not state:
+            for event in pg.event.get():
+                if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:  # Left mouse button clicked
+                    mouse_x, mouse_y = pg.mouse.get_pos()
+                    b = 1
+
+                    for y in range(10, interfaceTools.height, interfaceTools.tileSize):
+                        for x in range(10, interfaceTools.width, interfaceTools.tileSize):
+                            if (x + y) % 2 == 0:
+                                rectInfo = {}
+                                rect = pg.Rect(x, y, interfaceTools.tileSize, interfaceTools.tileSize)  # Maybe
+
+                                rectInfo["rect"] = rect
+                                rectInfo["nodeKey"] = b
+                                b += 1
+                                if rectInfo["rect"].collidepoint(mouse_x, mouse_y):
+                                    print("Starting coordinates:", x, y)
+                                    print(f"B is {rectInfo['nodeKey']}")
+
+
+                                # drawTable(graph,interfaceTools)
+        print(graph.nodes[c['nodeKey']])
+        #graph.move(c['nodeKey'],1,graph.DR)
+
+    print("goodbye.")
     pass
 def mainBoard(graph, interfaceTools):
     pg.init()
@@ -120,10 +165,8 @@ def mainBoard(graph, interfaceTools):
             rect = (x, y, interfaceTools.tileSize, interfaceTools.tileSize)
             pg.draw.rect(interfaceTools.background, next(colors), rect)
             if (x + y) % 2 == 0:
-                stackPointer = graph[c][graphStack]  # graph[c][1]
+                stackPointer = graph.nodes[c][graphStack]  # graph[c][1]
                 stackPointer.setCoordinates(x,y)
-                print(c)
-                print(stackPointer)
                 drawChips(interfaceTools,stackPointer)
                 c += 1
                 # stack pointer spot
@@ -137,6 +180,7 @@ def mainBoard(graph, interfaceTools):
             elif event.type == pg.MOUSEBUTTONDOWN and event.button == 1:  # Left mouse button clicked
                 mouse_x, mouse_y = pg.mouse.get_pos()
                 c = 1
+                isClickedState = True
 
                 for y in range(10, interfaceTools.height, interfaceTools.tileSize):
                     for x in range(10, interfaceTools.width, interfaceTools.tileSize):
@@ -144,23 +188,17 @@ def mainBoard(graph, interfaceTools):
                             rectInfo = {}
                             rect = pg.Rect(x, y, interfaceTools.tileSize, interfaceTools.tileSize)
 
-                            stackPointer = graph[c][graphStack]  # graph[c][1]
+                            stackPointer = graph.nodes[c][graphStack]  # graph[c][1]
                             stackPointer.setCoordinates(x, y)
 
                             rectInfo["rect"] = rect
                             rectInfo["nodeKey"] = c
                             c+=1
                             if rectInfo["rect"].collidepoint(mouse_x, mouse_y):
-                                # Rect clicked
-                                print("Rect clicked at:", x, y)
-                                print(f"Key being {rectInfo['nodeKey']}")
-                                # nacrtati highlight oko selektovanog polja
-                                movementHandle(rectInfo['nodeKey'], stackPointer,graph)
-                                # kad kliknem rectangle
-                                # pitam unutar funkcije da li je state 1 ili state 2
-                                # stateove napravim kao neki boolean check
-
-
+                                print("Starting coordinates:", x, y)
+                                print(f"C is {rectInfo['nodeKey']}")
+                                movementHandle(rectInfo, stackPointer,graph, isClickedState, interfaceTools)
+                                drawTable(graph,interfaceTools)
 
         screen.fill((60, 70, 90))
         screen.blit(interfaceTools.background, (10, 10))
