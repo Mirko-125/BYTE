@@ -124,7 +124,9 @@ def movementHandle(c, stack, graph, state, interfaceTools):
         state = False
         while not state:
             for event in pg.event.get():
-                if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:  # Left mouse button clicked
+                if event.type == pg.QUIT:
+                    state = False
+                elif event.type == pg.MOUSEBUTTONDOWN and event.button == 1:  # Left mouse button clicked
                     mouse_x, mouse_y = pg.mouse.get_pos()
                     b = 1
 
@@ -140,8 +142,9 @@ def movementHandle(c, stack, graph, state, interfaceTools):
                                 if rectInfo["rect"].collidepoint(mouse_x, mouse_y):
                                     print("Starting coordinates:", x, y)
                                     print(f"B is {rectInfo['nodeKey']}")
-
-
+                                    if c['nodeKey'] == rectInfo['nodeKey']:
+                                        print("it's okay now")
+                                        return
                                 # drawTable(graph,interfaceTools)
         print(graph.nodes[c['nodeKey']])
         #graph.move(c['nodeKey'],1,graph.DR)
