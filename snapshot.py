@@ -145,6 +145,11 @@ def movementHandle(c, stack, graph, state, interfaceTools):
                                     if c['nodeKey'] == rectInfo['nodeKey']:
                                         print("it's okay now")
                                         return
+                                    else:
+                                        print(graph.nodes[c['nodeKey']]['neighborNodes'])
+                                        for i in graph.nodes[c['nodeKey']]['neighborNodes']:
+                                            pass
+                                            #nacrtaj tacku
                                 # drawTable(graph,interfaceTools)
         print(graph.nodes[c['nodeKey']])
         #graph.move(c['nodeKey'],1,graph.DR)
