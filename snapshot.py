@@ -91,6 +91,7 @@ class InterfaceTools:
             cls._instance.tileSize = 75
             cls._instance.blackChip = loadAndScaleImage("./Assets/black-chip.png", (cls._instance.tileSize, cls._instance.tileSize))
             cls._instance.whiteChip = loadAndScaleImage("./Assets/white-chip.png", (cls._instance.tileSize, cls._instance.tileSize))
+            cls._instance.circle = loadAndScaleImage("./Assets/circle.png", (cls._instance.tileSize, cls._instance.tileSize))
             cls._instance.width = n * cls._instance.tileSize
             cls._instance.height = n * cls._instance.tileSize
             cls._instance.background = pg.Surface((cls._instance.width, cls._instance.height))
@@ -121,8 +122,6 @@ def movementHandle(cRect, stack, graph, state, interfaceTools):
         # Use legalMoves to return all keys with valid places to move
         # Use those keys to highlight appropriate rectangles on the field
         state = False
-        for n in graph.nodes[cRect['nodeKey']]['neighborNodes']:
-            drawPossibleMove(n) # ne znam kako da pristupim grafu preko keya
         while not state:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
@@ -144,6 +143,10 @@ def movementHandle(cRect, stack, graph, state, interfaceTools):
                                 bRect["y"] = y
 
                                 b += 1
+
+                                for n in graph.nodes[cRect['nodeKey']]['neighborNodes']:
+                                    drawPossibleMove(n,bRect,interfaceTools)  # ne znam kako da pristupim grafu preko keya
+
                                 if bRect["rect"].collidepoint(mouse_x, mouse_y):
                                     #print("Starting coordinates:", x, y)
                                     print(f"B is {bRect['nodeKey']}")
@@ -169,15 +172,22 @@ def movementHandle(cRect, stack, graph, state, interfaceTools):
                                                 
                                         pass # prodjes kroz petlju bRecta i ako je b == susedu c onda je potez dozvoljen
                                         '''
-
         print(graph.nodes[cRect['nodeKey']])
         #graph.move(c['nodeKey'],1,graph.DR)
 
     print("goodbye.")
     pass
 
-def drawPossibleMove(n):
-    pass
+def drawPossibleMove(n,bRect,interfaceTools):
+    print("##START##")
+    print(n)
+    print(bRect['nodeKey'])
+    if bRect['nodeKey']!=n:
+        interfaceTools.background.blit(interfaceTools.circle, (bRect['x'],bRect['y']))
+    else:
+        pass
+
+    print("##END##")
 def mainBoard(graph, interfaceTools):
     pg.init()
 
