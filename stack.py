@@ -28,5 +28,6 @@ class Stack:
     def setCoordinates(self, x, y):
         self.x = x
         self.y = y
+
     def __str__(self):
         return str(self.list)
