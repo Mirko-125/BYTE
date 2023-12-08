@@ -122,7 +122,7 @@ def movementHandle(cRect, stack, graph, state, interfaceTools):
         # Use those keys to highlight appropriate rectangles on the field
         state = False
         for n in graph.nodes[cRect['nodeKey']]['neighborNodes']:
-            drawPossibleMove(n,graph) # ne znam kako da pristupim grafu preko keya
+            drawPossibleMove(n) # ne znam kako da pristupim grafu preko keya
         while not state:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
@@ -176,8 +176,7 @@ def movementHandle(cRect, stack, graph, state, interfaceTools):
     print("goodbye.")
     pass
 
-def drawPossibleMove(n,graph):
-    print(graph.nodes[n])
+def drawPossibleMove(n):
     pass
 def mainBoard(graph, interfaceTools):
     pg.init()
