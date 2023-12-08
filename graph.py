@@ -13,6 +13,9 @@ class Graph:
         for number in range (1, int(N/2 + 1)):
             self.oddRange.add(number)
         self.nodes = self.initializeGraph()
+        self.createTable()
+        for key in self.nodes:
+            self.updateLegalMoves(key)
 
     def UL(self, K):
         if (self.isOdd(K)):

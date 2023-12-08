@@ -1,7 +1,7 @@
 import itertools
 import pygame as pg
 import sys
-from graphConstants import graphStack # graph ih vec poziva
+from graphConstants import * # graph ih vec poziva
 from graph import *
 import random
 
@@ -122,7 +122,7 @@ def movementHandle(cRect, stack, graph, state, interfaceTools):
         # Use legalMoves to return all keys with valid places to move
         # Use those keys to highlight appropriate rectangles on the field
         state = False
-        while not state:
+        while state is False:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     state = False
@@ -213,6 +213,9 @@ def mainBoard(graph, interfaceTools):
         next(colors)
 
     running = True
+    clickedKey = 0
+    legalMoves = {}
+    isClickedState = False
     while running:
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -220,7 +223,6 @@ def mainBoard(graph, interfaceTools):
             elif event.type == pg.MOUSEBUTTONDOWN and event.button == 1:  # Left mouse button clicked
                 mouse_x, mouse_y = pg.mouse.get_pos()
                 c = 1
-                isClickedState = True
 
                 for y in range(10, interfaceTools.height, interfaceTools.tileSize):
                     for x in range(10, interfaceTools.width, interfaceTools.tileSize):
@@ -231,18 +233,36 @@ def mainBoard(graph, interfaceTools):
                             stackPointer = graph.nodes[c][graphStack]  # graph[c][1]
                             stackPointer.setCoordinates(x, y)
 
-                            rectInfo["rect"] = rect
-                            rectInfo["nodeKey"] = c
+                            #rectInfo["rect"] = rect
+                            #rectInfo["nodeKey"] = c
 
                             rectInfo["x"] = x
                             rectInfo["y"] = y
 
-                            c+=1
-                            if rectInfo["rect"].collidepoint(mouse_x, mouse_y):
+                            
+                            if rect.collidepoint(mouse_x, mouse_y):
                                 print("Starting coordinates:", x, y)
-                                print(f"C is {rectInfo['nodeKey']}")
-                                movementHandle(rectInfo, stackPointer,graph, isClickedState, interfaceTools)
-                                drawTable(graph,interfaceTools)
+                                print(f"Key is {c}") #rectInfo['nodeKey']
+                                print(clickedKey)
+                                print(legalMoves)
+                                if isClickedState is False:
+                                    if not stackPointer.isEmpty():
+                                        print(f"Allowed moves are : {graph.nodes[c][allowedMoves]}")
+                                        isClickedState = True
+                                        legalMoves = graph.nodes[c][allowedMoves]
+                                        clickedKey = c
+                                elif c in legalMoves.keys():
+                                    graph.move(clickedKey, len(graph.nodes[clickedKey][graphStack].list), legalMoves[c])
+                                    drawTable(graph,interfaceTools)
+                                    isClickedState = False
+                                    legalMoves = {}
+                                    clickedKey = 0
+                                elif c == clickedKey:
+                                    isClickedState = False
+                                    legalMoves = {}
+                                    clickedKey = 0
+                                #movementHandle(rectInfo, stackPointer,graph, isClickedState, interfaceTools)
+                            c+=1
 
         screen.fill((60, 70, 90))
         screen.blit(interfaceTools.background, (10, 10))
