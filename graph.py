@@ -61,7 +61,7 @@ class Graph:
     def initializeGraph(self):
         graph = {}
         for key in range(1, int(self.N**2/2) + 1):
-            graph[key] = {neighborNodes: [], graphStack: Stack(False), allowedMoves: []}
+            graph[key] = {neighborNodes: [], graphStack: Stack(False), allowedMoves: {}}
         return graph
     
     def validateKey(self, key):
@@ -74,13 +74,15 @@ class Graph:
             raise MemoryError("The stack is empty")
         return True
     
+    def compareStacks():
+        pass
+    
     def validateDirection(self, direction, key):
-        
         if direction in self.validDirections:
             newKey = direction(key)
             if (newKey in self.nodes[key][neighborNodes]):
                 return True
-        raise False
+        return False
     
     def playersLegalMoves(self, color):
         legalMoves = []
@@ -89,23 +91,27 @@ class Graph:
                 legalMoves += (node.keys(), node[allowedMoves])
 
     def updateLegalMoves(self, key):
-        closestDistance = self.BFS(key, self.N)
+        closestDistance = self.BFS(key, self.N, key)
         directions = self.closestDirections(key, closestDistance)
         if (closestDistance == 1):
-            self.compareStacks()
+            #self.compareStacks()
+            self.nodes[key][allowedMoves] = directions
+        else:
+            self.nodes[key][allowedMoves] = directions
 
     def closestDirections(self, key, maxDistance):
         #Should find closest nodes whose stack is not empty. Once you find a node with BFS, keep using the BFS and return directions from which they come from.
-        directions = [
-            (direction, key)
+        return {
+            direction(key): direction
             for direction in self.validDirections
             if (
-                self.validateDirection(direction, key)
-                and self.BFS(direction(key), maxDistance - 1, key)
+                self.validateDirection(direction, key) 
+                and not self.nodes[key][graphStack].isEmpty()
+                and self.BFS(direction(key), maxDistance, key)
+                and direction(key) in self.nodes[key][neighborNodes]
             )
-        ]
-        return directions
-    
+        }
+
     def BFS(self, key, maxDistance, src = 0):
         visited = {src}
         queue = [key]
@@ -115,8 +121,12 @@ class Graph:
             for _ in range(iteration):
                 key = queue.pop(0)
                 if not self.nodes[key][graphStack].isEmpty():
-                    return distance
-                visited += key
+                    if key != src:
+                        if (distance == 0):
+                            return 1 
+                        else:
+                            return distance
+                visited.add(key)
                 for neighborNode in self.nodes[key][neighborNodes]:
                     if (neighborNode not in visited):
                         queue.append(neighborNode)
@@ -136,11 +146,12 @@ class Graph:
 
         newKey = direction(key)
         if (self.isLegalMove(key, newKey)):
+            topElement = self.nodes[newKey][graphStack].add(self.nodes[key][graphStack].pop(count))
             for neighborNode in self.nodes[key][neighborNodes]:
                 self.updateLegalMoves(neighborNode)
             for neighborNode in self.nodes[newKey][neighborNodes]:
                 self.updateLegalMoves(neighborNode)
-            return self.nodes[newKey][graphStack].add(self.nodes[key][graphStack].pop(count))
+            return topElement
         return False
         
 
