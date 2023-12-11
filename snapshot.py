@@ -156,6 +156,7 @@ def mainBoard(graph, interfaceTools, whitePlayer, blackPlayer):
     clickedKey = 0
     legalMoves = {}
     isClickedState = False
+    playerTurn = True # White = True
     while running:
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -173,6 +174,11 @@ def mainBoard(graph, interfaceTools, whitePlayer, blackPlayer):
                             stackPointer.setCoordinates(x, y)
 
                             if rect.collidepoint(mouse_x, mouse_y):
+                                if playerTurn:
+                                    print("White is playing")
+                                else:
+                                    print("Black is playing")
+
                                 print("Starting coordinates:", x, y)
                                 print(f"Key is {c}") #rectInfo['nodeKey']
                                 print(clickedKey)
@@ -189,7 +195,7 @@ def mainBoard(graph, interfaceTools, whitePlayer, blackPlayer):
                                     isClickedState = False
                                     legalMoves = {}
                                     clickedKey = 0
-                                    if finalElement == 'White': # proveri ko je pobednik
+                                    if finalElement == 'White':
                                         print('White got the stack')
                                         whitePlayer.addPoints(1)
                                     elif finalElement == 'Black':
@@ -210,6 +216,8 @@ def mainBoard(graph, interfaceTools, whitePlayer, blackPlayer):
         
         pg.display.flip()
         clock.tick(60)
+
+        playerTurn = not playerTurn
 
     pg.quit()
     sys.exit()
