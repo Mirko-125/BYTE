@@ -11,6 +11,15 @@ def checkfortie():
 
 def playturn(curr):
     return "Sada igra " + str(curr)
+def coordinateParse(coordinate, offsetMultiplier, multiplier = 1):
+    return multiplier * (coordinate / offsetMultiplier)
+def parseCoordinatesIntoKey(coordinates):
+    return (coordinates.x + coordinates.y + 1) / 2
+def parseCoordinates(coordinates, offsetMultiplier, N):
+    return (
+        coordinateParse(coordinates.x, offsetMultiplier),
+        coordinateParse(coordinates.y, offsetMultiplier, N)
+    )
 
 player = itertools.cycle((1,2))
 

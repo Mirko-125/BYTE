@@ -1,5 +1,4 @@
 import itertools
-
 import pygame as pg
 import sys
 from graphConstants import * # graph ih vec poziva
@@ -19,31 +18,13 @@ def drawChip(interfaceTools,x,y,element):
         interfaceTools.background.blit(interfaceTools.blackChip, (x,y))
     else:
         interfaceTools.background.blit(interfaceTools.whiteChip, (x,y))
-
-def parseCoordinates(coordinates, offsetMultiplier, N):
-    return (
-        coordinateParse(coordinates.x, offsetMultiplier),
-        coordinateParse(coordinates.y, offsetMultiplier, N)
-    )
-
-def coordinateParse(coordinate, offsetMultiplier, multiplier = 1):
-    return multiplier * (coordinate / offsetMultiplier)
-
-def parseCoordinatesIntoKey(coordinates):
-    return (coordinates.x + coordinates.y + 1) / 2
-
-def getEvenPositiveInput():
+def prompt():
     pg.init()
-
-    # Set up the window
-    windowSize = (400, 200)
+    windowSize = (835, 400)
     screen = pg.display.set_mode(windowSize)
     pg.display.set_caption("BYTE | Set your dimensions")
-
-    # Set up fonts
     font = pg.font.Font(None, 36)
     inputText = ""
-
     while True:
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -51,32 +32,24 @@ def getEvenPositiveInput():
                 sys.exit()
             elif event.type == pg.KEYDOWN:
                 if event.key == pg.K_RETURN:
-                    # If Enter key is pressed, check if the input is a valid even positive number
                     try:
                         number = int(inputText)
                         if number > 0 and number % 2 == 0:
                             pg.quit()
                             return number
                         else:
-                            # If not a valid input, clear the inputText
                             inputText = ""
                     except ValueError:
-                        # If not a valid integer, clear the inputText
                         inputText = ""
                 elif event.key == pg.K_BACKSPACE:
-                    # If Backspace key is pressed, remove the last character
                     inputText = inputText[:-1]
                 else:
-                    # Append other keypresses to the inputText
                     inputText += event.unicode
-
-        # Draw the input prompt
         screen.fill((60, 70, 90))
         promptText = font.render("Board size NxN, N is:", True, (200, 200, 200))
         inputPrompt = font.render(inputText, True, (220, 220, 220))
         screen.blit(promptText, (50, 50))
         screen.blit(inputPrompt, (50, 100))
-
         pg.display.flip()
 
 def loadAndScaleImage(imagePath, targetSize):
@@ -85,7 +58,6 @@ def loadAndScaleImage(imagePath, targetSize):
 
 class InterfaceTools:
     _instance = None  # Class variable to store the instance
-
     def __new__(cls, n):
         if cls._instance is None:
             cls._instance = super(InterfaceTools, cls).__new__(cls)
@@ -99,12 +71,9 @@ class InterfaceTools:
         return cls._instance
 
 def drawTable(graph,interfaceTools):
-
     black = pg.Color(192, 192, 192)
     white = pg.Color(105, 105, 105)
-
     colors = itertools.cycle((white, black))
-
     c = 1
     for y in range(0, interfaceTools.height, interfaceTools.tileSize):
         for x in range(0, interfaceTools.width, interfaceTools.tileSize):
@@ -118,45 +87,16 @@ def drawTable(graph,interfaceTools):
                 # stack pointer spot
         next(colors)
 
-def drawPossibleMove(n,bRect,interfaceTools):
-    print("##START##")
-    print(n)
-    print(bRect['nodeKey'])
-    if bRect['nodeKey']!=n:
-        interfaceTools.background.blit(interfaceTools.circle, (bRect['x'],bRect['y']))
-    else:
-        pass
-
-    print("##END##")
 def mainBoard(graph, interfaceTools, whitePlayer, blackPlayer):
     pg.init()
-
-    black = pg.Color(192, 192, 192)
-    white = pg.Color(105, 105, 105)
-
     screen = pg.display.set_mode((1280, 720))
     clock = pg.time.Clock()
-
-    colors = itertools.cycle((white, black))
-
-    c = 1
-    for y in range(0, interfaceTools.height, interfaceTools.tileSize):
-        for x in range(0, interfaceTools.width, interfaceTools.tileSize):
-            rect = (x, y, interfaceTools.tileSize, interfaceTools.tileSize)
-            pg.draw.rect(interfaceTools.background, next(colors), rect)
-            if (x + y) % 2 == 0:
-                stackPointer = graph.nodes[c][graphStack]  # graph[c][1]
-                stackPointer.setCoordinates(x,y)
-                drawChips(interfaceTools,stackPointer)
-                c += 1
-                # stack pointer spot
-        next(colors)
-
+    drawTable(graph,interfaceTools)
     running = True
     clickedKey = 0
     legalMoves = {}
     isClickedState = False
-    playerTurn = True # White = True
+    playerTurn = True # White = True | Black = False
     while running:
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -164,7 +104,6 @@ def mainBoard(graph, interfaceTools, whitePlayer, blackPlayer):
             elif event.type == pg.MOUSEBUTTONDOWN and event.button == 1:  # Left mouse button clicked
                 mouse_x, mouse_y = pg.mouse.get_pos()
                 c = 1
-
                 for y in range(10, interfaceTools.height, interfaceTools.tileSize):
                     for x in range(10, interfaceTools.width, interfaceTools.tileSize):
                         if (x+y)%2==0:
@@ -175,12 +114,11 @@ def mainBoard(graph, interfaceTools, whitePlayer, blackPlayer):
 
                             if rect.collidepoint(mouse_x, mouse_y):
                                 if playerTurn:
-                                    print("White is playing")
+                                    print("Next player is black")# White is playing
                                 else:
-                                    print("Black is playing")
-
-                                print("Starting coordinates:", x, y)
-                                print(f"Key is {c}") #rectInfo['nodeKey']
+                                    print("Next player is white")# Black is playing
+                                #print("Starting coordinates:", x, y)
+                                #print(f"Key is {c}") #rectInfo['nodeKey']
                                 print(clickedKey)
                                 print(legalMoves)
                                 if isClickedState is False:
@@ -206,18 +144,14 @@ def mainBoard(graph, interfaceTools, whitePlayer, blackPlayer):
                                     legalMoves = {}
                                     clickedKey = 0
                             c+=1
-
         if whitePlayer.isWinner():
             return 'WhiteWon'
         elif blackPlayer.isWinner():
             return 'BlackWon'
         screen.fill((60, 70, 90))
         screen.blit(interfaceTools.background, (10, 10))
-        
         pg.display.flip()
         clock.tick(60)
-
         playerTurn = not playerTurn
-
     pg.quit()
     sys.exit()

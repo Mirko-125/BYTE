@@ -11,7 +11,7 @@ def stackMove(graph,key,count,direction, interfaceTools):
     drawChips(interfaceTools, graph.nodes[direction(key)][graphStack])
 
 if __name__ == '__main__':
-    n = getEvenPositiveInput()
+    n = prompt()
     graph = Graph(n)
     whitePlayer = Player("White")
     blackPlayer = Player("Black")
