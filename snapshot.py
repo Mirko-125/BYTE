@@ -1,4 +1,6 @@
 import itertools
+
+import pygame
 import pygame as pg
 import sys
 from graphConstants import * # graph ih vec poziva
@@ -117,67 +119,6 @@ def drawTable(graph,interfaceTools):
                 # stack pointer spot
         next(colors)
 
-def movementHandle(cRect, stack, graph, state, interfaceTools):
-    if not stack.isEmpty() and state:
-        # Use legalMoves to return all keys with valid places to move
-        # Use those keys to highlight appropriate rectangles on the field
-        state = False
-        while state is False:
-            for event in pg.event.get():
-                if event.type == pg.QUIT:
-                    state = False
-                elif event.type == pg.MOUSEBUTTONDOWN and event.button == 1:  # Left mouse button clicked
-                    mouse_x, mouse_y = pg.mouse.get_pos()
-                    b = 1
-
-                    for y in range(10, interfaceTools.height, interfaceTools.tileSize):
-                        for x in range(10, interfaceTools.width, interfaceTools.tileSize):
-                            if (x + y) % 2 == 0:
-                                bRect = {}
-                                rect = pg.Rect(x, y, interfaceTools.tileSize, interfaceTools.tileSize)  # Maybe
-
-                                bRect["rect"] = rect
-                                bRect["nodeKey"] = b
-
-                                bRect["x"] = x
-                                bRect["y"] = y
-
-                                b += 1
-
-                                for n in graph.nodes[cRect['nodeKey']]['neighborNodes']:
-                                    drawPossibleMove(n,bRect,interfaceTools)  # ne znam kako da pristupim grafu preko keya
-
-                                if bRect["rect"].collidepoint(mouse_x, mouse_y):
-                                    #print("Starting coordinates:", x, y)
-                                    print(f"B is {bRect['nodeKey']}")
-                                    if cRect['nodeKey'] == bRect['nodeKey']:
-                                        print("you can exit the program.")
-                                        return
-                                    else:
-                                        if graph.nodes[cRect['nodeKey']]['neighborNodes'][0] == bRect['nodeKey'] and not None:
-                                            graph.move(cRect['nodeKey'],1,graph.UR)
-                                            return
-                                        elif graph.nodes[cRect['nodeKey']]['neighborNodes'][1] == bRect['nodeKey'] and not None:
-                                            graph.move(cRect['nodeKey'], 1, graph.UL)
-                                            return
-                                        elif graph.nodes[cRect['nodeKey']]['neighborNodes'][2] == bRect['nodeKey'] and not None:
-                                            graph.move(cRect['nodeKey'],1,graph.DL)
-                                            return
-                                        elif graph.nodes[cRect['nodeKey']]['neighborNodes'][3] == bRect['nodeKey'] and not None:
-                                            graph.move(cRect['nodeKey'],1,graph.DR)
-                                            return
-                                        '''
-                                        for x in graph.nodes[cRect['nodeKey']]['neighborNodes']:
-                                            if x == bRect['nodeKey']:
-                                                
-                                        pass # prodjes kroz petlju bRecta i ako je b == susedu c onda je potez dozvoljen
-                                        '''
-        print(graph.nodes[cRect['nodeKey']])
-        #graph.move(c['nodeKey'],1,graph.DR)
-
-    print("goodbye.")
-    pass
-
 def drawPossibleMove(n,bRect,interfaceTools):
     print("##START##")
     print(n)
@@ -188,7 +129,7 @@ def drawPossibleMove(n,bRect,interfaceTools):
         pass
 
     print("##END##")
-def mainBoard(graph, interfaceTools):
+def mainBoard(graph, interfaceTools, whitePlayer, blackPlayer):
     pg.init()
 
     black = pg.Color(192, 192, 192)
@@ -227,19 +168,11 @@ def mainBoard(graph, interfaceTools):
                 for y in range(10, interfaceTools.height, interfaceTools.tileSize):
                     for x in range(10, interfaceTools.width, interfaceTools.tileSize):
                         if (x+y)%2==0:
-                            rectInfo = {}
                             rect = pg.Rect(x, y, interfaceTools.tileSize, interfaceTools.tileSize)
 
                             stackPointer = graph.nodes[c][graphStack]  # graph[c][1]
                             stackPointer.setCoordinates(x, y)
 
-                            #rectInfo["rect"] = rect
-                            #rectInfo["nodeKey"] = c
-
-                            rectInfo["x"] = x
-                            rectInfo["y"] = y
-
-                            
                             if rect.collidepoint(mouse_x, mouse_y):
                                 print("Starting coordinates:", x, y)
                                 print(f"Key is {c}") #rectInfo['nodeKey']
@@ -252,16 +185,17 @@ def mainBoard(graph, interfaceTools):
                                         legalMoves = graph.nodes[c][allowedMoves]
                                         clickedKey = c
                                 elif c in legalMoves.keys():
-                                    graph.move(clickedKey, len(graph.nodes[clickedKey][graphStack].list), legalMoves[c])
+                                    finalElement = graph.move(clickedKey, len(graph.nodes[clickedKey][graphStack].list), legalMoves[c])
                                     drawTable(graph,interfaceTools)
                                     isClickedState = False
                                     legalMoves = {}
                                     clickedKey = 0
+                                    if finalElement == 0: # proveri ko je pobednik
+                                        pass
                                 elif c == clickedKey:
                                     isClickedState = False
                                     legalMoves = {}
                                     clickedKey = 0
-                                #movementHandle(rectInfo, stackPointer,graph, isClickedState, interfaceTools)
                             c+=1
 
         screen.fill((60, 70, 90))
@@ -271,3 +205,4 @@ def mainBoard(graph, interfaceTools):
         clock.tick(60)
 
     pg.quit()
+    sys.exit()
