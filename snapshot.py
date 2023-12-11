@@ -1,6 +1,5 @@
 import itertools
 
-import pygame
 import pygame as pg
 import sys
 from graphConstants import * # graph ih vec poziva
