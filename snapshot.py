@@ -190,14 +190,22 @@ def mainBoard(graph, interfaceTools, whitePlayer, blackPlayer):
                                     isClickedState = False
                                     legalMoves = {}
                                     clickedKey = 0
-                                    if finalElement == 0: # proveri ko je pobednik
-                                        pass
+                                    if finalElement == 'White': # proveri ko je pobednik
+                                        print('White got the stack')
+                                        whitePlayer.addPoints(1)
+                                    elif finalElement == 'Black':
+                                        print('Black got the stack')
+                                        blackPlayer.addPoints(1)
                                 elif c == clickedKey:
                                     isClickedState = False
                                     legalMoves = {}
                                     clickedKey = 0
                             c+=1
 
+        if whitePlayer.isWinner():
+            return 'WhiteWon'
+        elif blackPlayer.isWinner():
+            return 'BlackWon'
         screen.fill((60, 70, 90))
         screen.blit(interfaceTools.background, (10, 10))
         
