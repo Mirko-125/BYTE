@@ -18,12 +18,15 @@ class Stack:
         else:
             self.list.extend(elements)
         return 0
+    
+    def length(self):
+        return len(self.list)
 
     def isEmpty(self):
-        return len(self.list) == 0
+        return self.length() == 0
     
     def pop(self, count):
-        return [self.list.pop() for _ in range(count)]
+        return [self.list.pop() for _ in range(count)][::-1]
 
     def setCoordinates(self, x, y):
         self.x = x
