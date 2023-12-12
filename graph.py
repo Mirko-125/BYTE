@@ -1,6 +1,6 @@
 from piece import Piece
 from stack import Stack
-from graphConstants import neighborNodes, graphStack, allowedMoves
+from graphConstants import *
 
 class Graph:
     def __init__(self, N):
@@ -67,6 +67,30 @@ class Graph:
             graph[key] = {neighborNodes: [], graphStack: Stack(False), allowedMoves: {}}
         return graph
     
+    def createTable(self):
+        firstIteration = int(self.N/2) + 1
+        secondIteration = int(self.N**2 / 2 - self.N/2) + 1
+        finalIteration = int(self.N**2/2) 
+        self.nodes[1][neighborNodes].append(self.DR(1))
+        for key in range(2, firstIteration):
+            self.nodes[key][neighborNodes].extend([self.DL(key), self.DR(key)])
+        for key in range(firstIteration, secondIteration):
+            if self.isOdd(key):
+                self.nodes[key][graphStack].add([Piece("White").color])
+                if self.isFirstOddElement(key):
+                    self.nodes[key][neighborNodes].extend([self.UR(key), self.DR(key)])
+                else:
+                    self.nodes[key][neighborNodes].extend([self.UR(key), self.UL(key), self.DL(key), self.DR(key)])
+            else:
+                self.nodes[key][graphStack].add([Piece("Black").color])
+                if self.isLastEvenElement(key):
+                    self.nodes[key][neighborNodes].extend([self.UL(key), self.DL(key)])
+                else:
+                    self.nodes[key][neighborNodes].extend([self.UR(key), self.UL(key), self.DL(key), self.DR(key)])
+        for key in range(secondIteration, finalIteration):
+            self.nodes[key][neighborNodes].extend([self.UL(key), self.UR(key)])
+        self.nodes[key+1][neighborNodes].append(self.UL(key + 1))
+    
     def validateKey(self, key):
         if (key > 0 and key <= self.size):
             return True
@@ -77,8 +101,29 @@ class Graph:
             raise MemoryError("The stack is empty")
         return True
     
-    def compareStacks():
-        pass
+    def nearbyStackAltitudes(self, moves):
+        viableNeighborNodes = list(moves.keys())
+        return {
+            node: stackAltitude
+            if (self.nodes[node][graphStack].isEmpty()) else self.nodes[node][graphStack].length()
+            for node in viableNeighborNodes
+            }
+
+    def filterMovesPerSize(self, indexes: list, stack, comparedStack):
+        return [index for index in indexes if stack.validateMaxSize(index, comparedStack)]
+
+    def parseMovesPerColor(self, moves, altitudeDifferences, stack, color):
+        return { key : (direction, indexes)
+                 for key, direction in moves.items()
+                 if (indexes := self.filterMovesPerSize(stack.getIndexesForColor(altitudeDifferences[key], color), stack, self.nodes[key][graphStack]))
+        }
+    
+    def parseMovesPerPlayer(self, moves, key):
+        stack = self.nodes[key][graphStack]
+        altitudeDifferences = self.nearbyStackAltitudes(moves)
+        return {'Black': self.parseMovesPerColor(moves, altitudeDifferences, stack, "Black"),
+        'White': self.parseMovesPerColor(moves, altitudeDifferences, stack, "White")}
+        
     
     def validateDirection(self, direction, key):
         if direction in self.validDirections:
@@ -95,15 +140,10 @@ class Graph:
 
     def updateLegalMoves(self, key):
         closestDistance = self.BFS(key, self.N, key)
-        directions = self.closestDirections(key, closestDistance)
-        if (closestDistance == 1):
-            #self.compareStacks()
-            self.nodes[key][allowedMoves] = directions
-        else:
-            self.nodes[key][allowedMoves] = directions
-
+        moves = self.closestDirections(key, closestDistance)
+        self.nodes[key][allowedMoves] = self.parseMovesPerPlayer(moves, key)   # [(node, visina indexa)]
+   
     def closestDirections(self, key, maxDistance):
-        #Should find closest nodes whose stack is not empty. Once you find a node with BFS, keep using the BFS and return directions from which they come from.
         return {
             direction(key): direction
             for direction in self.validDirections
@@ -136,56 +176,24 @@ class Graph:
             distance += 1
         return False
     
-    def isLegalMove(self, key, newKey):
-        if (newKey in self.nodes[key][allowedMoves]):
-            return True
-        return False
-
-    def move(self, key, count, direction):
+    def isLegalMove(self, key, newKey, index, player):
+        if newKey in self.nodes[key][allowedMoves][player.color]:
+            if index in self.nodes[key][allowedMoves][player.color][newKey][1]:
+                return True
+            return False
+        
+    def move(self, key, index, direction, player):
         self.validateKey(key)
         self.validateStack(key)
         if not self.validateDirection(direction, key):
             raise ValueError("Invalid direction")
 
         newKey = direction(key)
-        if (self.isLegalMove(key, newKey)):
-            topElement = self.nodes[newKey][graphStack].add(self.nodes[key][graphStack].pop(count))
+        if (self.isLegalMove(key, newKey, index, player)):
+            topElement = self.nodes[newKey][graphStack].add(self.nodes[key][graphStack].pop(index))
             for neighborNode in self.nodes[key][neighborNodes]:
                 self.updateLegalMoves(neighborNode)
             for neighborNode in self.nodes[newKey][neighborNodes]:
                 self.updateLegalMoves(neighborNode)
             return topElement
         return False
-        
-
-    def createTable(self):
-        firstIteration = int(self.N/2) + 1
-        secondIteration = int(self.N**2 / 2 - self.N/2) + 1
-        finalIteration = int(self.N**2/2) 
-        self.nodes[1][neighborNodes].append(self.DR(1))
-        for key in range(2, firstIteration):
-            self.nodes[key][neighborNodes].extend([self.DL(key), self.DR(key)])
-        for key in range(firstIteration, secondIteration):
-            if self.isOdd(key):
-                self.nodes[key][graphStack].add([Piece("White").color])
-                if self.isFirstOddElement(key):
-                    self.nodes[key][neighborNodes].extend([self.UR(key), self.DR(key)])
-                else:
-                    self.nodes[key][neighborNodes].extend([self.UR(key), self.UL(key), self.DL(key), self.DR(key)])
-            else:
-                self.nodes[key][graphStack].add([Piece("Black").color])
-                if self.isLastEvenElement(key):
-                    self.nodes[key][neighborNodes].extend([self.UL(key), self.DL(key)])
-                else:
-                    self.nodes[key][neighborNodes].extend([self.UR(key), self.UL(key), self.DL(key), self.DR(key)])
-        for key in range(secondIteration, finalIteration):
-            self.nodes[key][neighborNodes].extend([self.UL(key), self.UR(key)])
-        self.nodes[key+1][neighborNodes].append(self.UL(key + 1))
-
-#graph.move(9, 1, graph.DL)
-#graph.move(13, 2, graph.DR)
-#graph.move(17, 3, graph.DR)
-#graph.move(17, 4, graph.UL)
-#
-#for key, value in graph.nodes.items():
-#    print(f"Node {key}: {value[neighborNodes]}, {value[graphStack]}")
