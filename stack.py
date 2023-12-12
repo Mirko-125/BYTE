@@ -32,6 +32,9 @@ class Stack:
     def length(self):
         return len(self.list)
 
+    def length(self):
+        return len(self.list)
+
     def isEmpty(self):
         return self.length() == 0
     
