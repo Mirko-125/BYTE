@@ -127,8 +127,8 @@ class Graph:
     
     def validateDirection(self, direction, key):
         if direction in self.validDirections:
-            newKey = direction(key)
-            if (newKey in self.nodes[key][neighborNodes]):
+            dstKey = direction(key)
+            if (dstKey in self.nodes[key][neighborNodes]):
                 return True
         return False
     
@@ -154,6 +154,28 @@ class Graph:
                 and direction(key) in self.nodes[key][neighborNodes]
             )
         }
+    
+    def nodesToUpdate(self, srcKey, dstKey):
+        visited = {}
+        queue = [srcKey, dstKey]
+        toUpdateList = []
+        while (len(queue)>0):
+            iteration = len(queue)
+            for _ in range(iteration):
+                key = queue.pop(0)
+                visited.add(key)
+                for neighborNode in self.nodes[key][neighborNodes]:
+                    if neighborNode not in visited:
+                        if self.nodes[neighborNode][graphStack].isEmpty():
+                            queue.append(neighborNode)
+                        else:
+                            visited.add(neighborNode)
+                            toUpdateList.append(neighborNode)
+        return toUpdateList
+    
+    def updateState(self, srcKey, dstKey):
+        for node in self.nodesToUpdate(srcKey, dstKey):
+            self.updateLegalMoves(node)
 
     def BFS(self, key, maxDistance, src = 0):
         visited = {src}
@@ -176,9 +198,9 @@ class Graph:
             distance += 1
         return False
     
-    def isLegalMove(self, key, newKey, index, player):
-        if newKey in self.nodes[key][allowedMoves][player.color]:
-            if index in self.nodes[key][allowedMoves][player.color][newKey][1]:
+    def isLegalMove(self, key, dstKey, index, player):
+        if dstKey in self.nodes[key][allowedMoves][player.color]:
+            if index in self.nodes[key][allowedMoves][player.color][dstKey][1]:
                 return True
             return False
         
@@ -188,12 +210,9 @@ class Graph:
         if not self.validateDirection(direction, key):
             raise ValueError("Invalid direction")
 
-        newKey = direction(key)
-        if (self.isLegalMove(key, newKey, index, player)):
-            topElement = self.nodes[newKey][graphStack].add(self.nodes[key][graphStack].pop(index))
-            for neighborNode in self.nodes[key][neighborNodes]:
-                self.updateLegalMoves(neighborNode)
-            for neighborNode in self.nodes[newKey][neighborNodes]:
-                self.updateLegalMoves(neighborNode)
+        dstKey = direction(key)
+        if (self.isLegalMove(key, dstKey, index, player)):
+            topElement = self.nodes[dstKey][graphStack].add(self.nodes[key][graphStack].pop(index))
+            self.updateState(key, dstKey)
             return topElement
         return False
