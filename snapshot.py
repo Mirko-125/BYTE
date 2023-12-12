@@ -87,6 +87,12 @@ def drawTable(graph,interfaceTools):
                 # stack pointer spot
         next(colors)
 
+def swapColor(color):
+    if color == 'White':
+        return 'Black'
+    elif color == 'Black':
+        return 'White'
+
 def mainBoard(graph, interfaceTools, whitePlayer, blackPlayer):
     pg.init()
     screen = pg.display.set_mode((1280, 720))
@@ -95,6 +101,7 @@ def mainBoard(graph, interfaceTools, whitePlayer, blackPlayer):
     running = True
     clickedKey = 0
     legalMoves = {}
+    color = 'White'
     isClickedState = False
     playerTurn = True # White = True | Black = False
     while running:
@@ -113,26 +120,22 @@ def mainBoard(graph, interfaceTools, whitePlayer, blackPlayer):
                             stackPointer.setCoordinates(x, y)
 
                             if rect.collidepoint(mouse_x, mouse_y):
-                                if playerTurn:
-                                    print("Next player is black")# White is playing
-                                else:
-                                    print("Next player is white")# Black is playing
                                 #print("Starting coordinates:", x, y)
-                                #print(f"Key is {c}") #rectInfo['nodeKey']
-                                print(clickedKey)
                                 print(legalMoves)
+                                print(color)
                                 if isClickedState is False:
-                                    if not stackPointer.isEmpty():
-                                        print(f"Allowed moves are : {graph.nodes[c][allowedMoves]}")
+                                    if graph.nodes[c][allowedMoves][color]:
+                                        print(f"Allowed moves are : {graph.nodes[c][allowedMoves][color]}")
                                         isClickedState = True
-                                        legalMoves = graph.nodes[c][allowedMoves]
+                                        legalMoves = graph.nodes[c][allowedMoves][color]
                                         clickedKey = c
                                 elif c in legalMoves.keys():
-                                    finalElement = graph.move(clickedKey, len(graph.nodes[clickedKey][graphStack].list), legalMoves[c])
+                                    finalElement = graph.move(clickedKey, 0, legalMoves[c][0], color)
                                     drawTable(graph,interfaceTools)
                                     isClickedState = False
                                     legalMoves = {}
                                     clickedKey = 0
+                                    color = swapColor(color)
                                     if finalElement == 'White':
                                         print('White got the stack')
                                         whitePlayer.addPoints(1)

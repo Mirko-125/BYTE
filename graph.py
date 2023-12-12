@@ -156,7 +156,7 @@ class Graph:
         }
     
     def nodesToUpdate(self, srcKey, dstKey):
-        visited = {}
+        visited = {0}
         queue = [srcKey, dstKey]
         toUpdateList = []
         while (len(queue)>0):
@@ -198,20 +198,20 @@ class Graph:
             distance += 1
         return False
     
-    def isLegalMove(self, key, dstKey, index, player):
-        if dstKey in self.nodes[key][allowedMoves][player.color]:
-            if index in self.nodes[key][allowedMoves][player.color][dstKey][1]:
+    def isLegalMove(self, key, dstKey, index, color):
+        if dstKey in self.nodes[key][allowedMoves][color]:
+            if index in self.nodes[key][allowedMoves][color][dstKey][1]:
                 return True
             return False
         
-    def move(self, key, index, direction, player):
+    def move(self, key, index, direction, color):
         self.validateKey(key)
         self.validateStack(key)
         if not self.validateDirection(direction, key):
             raise ValueError("Invalid direction")
 
         dstKey = direction(key)
-        if (self.isLegalMove(key, dstKey, index, player)):
+        if (self.isLegalMove(key, dstKey, index, color)):
             topElement = self.nodes[dstKey][graphStack].add(self.nodes[key][graphStack].pop(index))
             self.updateState(key, dstKey)
             return topElement

@@ -11,12 +11,11 @@ class Stack:
         combinedLength = len(self.list) + len(elements)
         if combinedLength > 8:
             return "Unable to overexceed 8 elements"
-        elif combinedLength == 8:
+        self.list.extend(elements)
+        if combinedLength == 8:
             finalElement = self.list.pop()
             self.list.clear()
             return finalElement
-        else:
-            self.list.extend(elements)
         return 0
     
     def getSizeFromIndex(self, index):
@@ -29,9 +28,6 @@ class Stack:
     def validateMaxSize(self, index, stack):
         return stack.length() + self.getSizeFromIndex(index) <= self.max
     
-    def length(self):
-        return len(self.list)
-
     def length(self):
         return len(self.list)
 
