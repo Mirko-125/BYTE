@@ -117,6 +117,7 @@ def mainBoard(graph, interfaceTools, whitePlayer, blackPlayer):
     color = 'White'
     isClickedState = False
     playerTurn = True # White = True | Black = False
+    font = pg.font.Font("./Assets/bahnschrift.ttf", 20)
     #highlighter = pg.Surface((interfaceTools.tileSize, interfaceTools.tileSize), pg.SRCALPHA)
     #highlighter.fill((0, 255, 0, 64))
     while running:
@@ -158,9 +159,13 @@ def mainBoard(graph, interfaceTools, whitePlayer, blackPlayer):
                                     if finalElement == 'White':
                                         print('White got the stack')
                                         whitePlayer.addPoints(1)
+                                        print("White player: ")
+                                        print(whitePlayer.points)
                                     elif finalElement == 'Black':
                                         print('Black got the stack')
                                         blackPlayer.addPoints(1)
+                                        print("Black player: ")
+                                        print(blackPlayer.points)
                                 elif c == clickedKey:
                                     isClickedState = False
                                     legalMoves = {}
@@ -172,6 +177,11 @@ def mainBoard(graph, interfaceTools, whitePlayer, blackPlayer):
             return 'BlackWon'
         screen.fill((60, 70, 90))
         screen.blit(interfaceTools.background, (0, 0))
+        white_score_text = font.render(f"White: {whitePlayer.points}", True, (255, 255, 255))
+        black_score_text = font.render(f"Black: {blackPlayer.points}", True, (255, 255, 255))
+
+        screen.blit(white_score_text, (interfaceTools.width+100, 10))
+        screen.blit(black_score_text, (interfaceTools.width+100, 50))
         pg.display.flip()
         clock.tick(60)
         playerTurn = not playerTurn
