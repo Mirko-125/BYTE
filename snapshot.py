@@ -18,12 +18,18 @@ def drawChip(interfaceTools,x,y,element):
         interfaceTools.background.blit(interfaceTools.blackChip, (x,y))
     else:
         interfaceTools.background.blit(interfaceTools.whiteChip, (x,y))
+
+
+import pygame as pg
+import sys
+
 def prompt():
     pg.init()
     windowSize = (835, 400)
     screen = pg.display.set_mode(windowSize)
     pg.display.set_caption("BYTE | Set your dimensions")
-    font = pg.font.Font(None, 36)
+    regular_font = pg.font.Font(None, 36)
+    techy_font = pg.font.Font(None, 24)
     inputText = ""
     while True:
         for event in pg.event.get():
@@ -46,10 +52,17 @@ def prompt():
                 else:
                     inputText += event.unicode
         screen.fill((60, 70, 90))
-        promptText = font.render("Board size NxN, N is:", True, (200, 200, 200))
-        inputPrompt = font.render(inputText, True, (220, 220, 220))
+        inputRect = pg.Rect(50, 100, 200, 40)
+        pg.draw.rect(screen, (255, 255, 255), inputRect, 2)
+
+        # Render and display input prompt with a default font
+        promptText = regular_font.render("Board size NxN, N is:", True, (255, 255, 255))
+        inputPrompt = regular_font.render(inputText, True, (255, 255, 255))
         screen.blit(promptText, (50, 50))
-        screen.blit(inputPrompt, (50, 100))
+        screen.blit(inputPrompt, (55, 105))
+        techyText = techy_font.render("Made by: Mirko Bojanić 18087, Miloš Miljković 19040, Nemanja Stanković 18391", True, (80, 90, 110))
+        screen.blit(techyText, (20, windowSize[1] - 40))
+
         pg.display.flip()
 
 def loadAndScaleImage(imagePath, targetSize):
