@@ -34,7 +34,7 @@ def prompt():
                 if event.key == pg.K_RETURN:
                     try:
                         number = int(inputText)
-                        if number > 0 and number % 2 == 0:
+                        if number in [8, 10, 16]:
                             pg.quit()
                             return number
                         else:
