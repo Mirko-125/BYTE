@@ -13,17 +13,19 @@ def stackMove(graph,key,count,direction, interfaceTools):
 if __name__ == '__main__':
     n = getEvenPositiveInput()
     graph = Graph(n)
-    graph.createTable()
-    #graph.move(5, 1, graph.DR)
     whitePlayer = Player("White")
     blackPlayer = Player("Black")
-    whitePlayer.addPoints(2)
-    if (whitePlayer.isWinner()):
-        pg.quit()
-    if (blackPlayer.isWinner()): # da je whitePlayer pobedio bi
-        sys.exit()
+    #whitePlayer.addPoints(2)
+    #if (whitePlayer.isWinner()):
+        #pg.quit()
+    #if (blackPlayer.isWinner()): # da je whitePlayer pobedio bi
+        #sys.exit()
     #for key, value in graph.nodes.items():
         #print(f"Node {key}: {value[neighborNodes]}, {value[graphStack]}")
-
-    interfaceTools = InterfaceTools(n)
-    mainBoard(graph,interfaceTools)
+    while whitePlayer.isWinner() is False or blackPlayer.isWinner() is False:
+        interfaceTools = InterfaceTools(n)
+        if mainBoard(graph, interfaceTools): # mozda cemo morati da vratimo tuple umesto Tru/Flase
+            whitePlayer.addPoints(1)
+        else:
+            blackPlayer.addPoints(1)
+    pg.quit()

@@ -5,19 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d142a533-e6fa-4b8e-b610-3445a514403a" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/graph.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/graphConstants.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/piece.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/player.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/stack.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/circle.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/black-chip.png" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/black-chip.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/graph.py" beforeDir="false" afterPath="$PROJECT_DIR$/graph.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/newfile.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/notverymain.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/snapshot.py" beforeDir="false" afterPath="$PROJECT_DIR$/snapshot.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/white-chip.png" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/white-chip.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stack.py" beforeDir="false" afterPath="$PROJECT_DIR$/stack.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,7 +37,7 @@
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
     &quot;git-widget-placeholder&quot;: &quot;Merging main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/FAX/BYTE&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/FAX/BYTE/main.py&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -53,7 +46,7 @@
   }
 }</component>
   <component name="RunManager">
-    <configuration name="snapshot" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+    <configuration name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="BYTE" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -66,7 +59,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/snapshot.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -90,7 +83,10 @@
       <workItem from="1701384328483" duration="664000" />
       <workItem from="1701447295020" duration="9299000" />
       <workItem from="1701901317229" duration="35000" />
-      <workItem from="1702054577801" duration="5669000" />
+      <workItem from="1702054577801" duration="9042000" />
+      <workItem from="1702130713306" duration="10745000" />
+      <workItem from="1702153492023" duration="234000" />
+      <workItem from="1702500418519" duration="281000" />
     </task>
     <servers />
   </component>
@@ -99,6 +95,6 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/BYTE$snapshot.coverage" NAME="snapshot Coverage Results" MODIFIED="1702057451067" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/BYTE$main.coverage" NAME="main Coverage Results" MODIFIED="1702064381831" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/BYTE$main.coverage" NAME="main Coverage Results" MODIFIED="1702153494116" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
