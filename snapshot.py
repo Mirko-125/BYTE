@@ -13,6 +13,7 @@ def drawChips(interfaceTools,stack):
         else:
             drawChip(interfaceTools,stack.x+random.randint(-2, 2),stack.y-offset,element)
         offset += 13
+        
 def drawChip(interfaceTools,x,y,element):
     if element == 'Black':
         interfaceTools.background.blit(interfaceTools.blackChip, (x,y))
