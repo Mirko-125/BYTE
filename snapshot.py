@@ -93,7 +93,7 @@ def drawTable(graph,interfaceTools):
             rect = (x, y, interfaceTools.tileSize, interfaceTools.tileSize)
             pg.draw.rect(interfaceTools.background, next(colors), rect)
             if (x + y) % 2 == 0:
-                stackPointer = graph.nodes[c][graphStack]  # graph[c][1]
+                stackPointer = graph.nodes[c][GRAPH_STACK]  # graph[c][1]
                 stackPointer.setCoordinates(x, y)
                 drawChips(interfaceTools, stackPointer)
                 c += 1
@@ -133,7 +133,7 @@ def mainBoard(n, graph, interfaceTools, whitePlayer, blackPlayer):
                         if (x+y) % 2 == 0:
                             rect = pg.Rect(x, y, interfaceTools.tileSize, interfaceTools.tileSize)
 
-                            stackPointer = graph.nodes[c][graphStack]  # graph[c][1]
+                            stackPointer = graph.nodes[c][GRAPH_STACK]  # graph[c][1]
                             stackPointer.setCoordinates(x, y)
 
                             if rect.collidepoint(mouse_x, mouse_y):
@@ -141,13 +141,13 @@ def mainBoard(n, graph, interfaceTools, whitePlayer, blackPlayer):
                                 #interfaceTools.background.blit(highlighter, (x - 10, y - 10), special_flags=pg.BLEND_RGBA_SUB)
                                 print(validMoves)
                                 print(color)
-                                for n in graph.nodes[c][allowedMoves][color].keys():
+                                for n in graph.nodes[c][ALLOWED_MOVES][color].keys():
                                     interfaceTools.background.blit(interfaceTools.highlighter, (graph.nodes[n][graphStack].x, graph.nodes[n][graphStack].y))
                                 if isClickedState is False:
-                                    if graph.nodes[c][allowedMoves][color]:
-                                        print(f"Allowed moves are : {graph.nodes[c][allowedMoves][color]}")
+                                    if graph.nodes[c][ALLOWED_MOVES][color]:
+                                        print(f"Allowed moves are : {graph.nodes[c][ALLOWED_MOVES][color]}")
                                         isClickedState = True
-                                        validMoves = graph.nodes[c][allowedMoves][color]
+                                        legalMoves = graph.nodes[c][ALLOWED_MOVES][color]
                                         clickedKey = c
                                 elif c in validMoves.keys():
                                     finalElement = graph.move(clickedKey, 0, validMoves[c][0], color)
