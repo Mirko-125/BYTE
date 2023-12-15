@@ -1,11 +1,12 @@
-from graph import Graph
+from graph import *
 from graphConstants import *
 
 graph = Graph(8)
-graph.createTable()
-
 for key in graph.nodes:
-    graph.updateLegalMoves(key)
-graph.move(9, 1, graph.UR)      
-for key, value in graph.nodes.items():
-    print(f"Node {key}: {value[neighborNodes]}, {value[allowedMoves]}")
+    graph.updateValidMoves(key)
+graph.move(9, 0, graph.UR, 'White')      
+#print(graph.getMovesForPlayer('White'))
+pos_states = graph.possibleStates()
+print(pos_states[8].nodes)
+#for key, value in graph.nodes.items():
+#    print(f"Node {key}: {value[NEIGHBOR_NODES]}, {value[ALLOWED_MOVES]}")

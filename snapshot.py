@@ -80,7 +80,7 @@ def drawTable(graph,interfaceTools):
             rect = (x, y, interfaceTools.tileSize, interfaceTools.tileSize)
             pg.draw.rect(interfaceTools.background, next(colors), rect)
             if (x + y) % 2 == 0:
-                stackPointer = graph.nodes[c][graphStack]  # graph[c][1]
+                stackPointer = graph.nodes[c][GRAPH_STACK]  # graph[c][1]
                 stackPointer.setCoordinates(x, y)
                 drawChips(interfaceTools, stackPointer)
                 c += 1
@@ -116,7 +116,7 @@ def mainBoard(graph, interfaceTools, whitePlayer, blackPlayer):
                         if (x+y)%2==0:
                             rect = pg.Rect(x, y, interfaceTools.tileSize, interfaceTools.tileSize)
 
-                            stackPointer = graph.nodes[c][graphStack]  # graph[c][1]
+                            stackPointer = graph.nodes[c][GRAPH_STACK]  # graph[c][1]
                             stackPointer.setCoordinates(x, y)
 
                             if rect.collidepoint(mouse_x, mouse_y):
@@ -124,10 +124,10 @@ def mainBoard(graph, interfaceTools, whitePlayer, blackPlayer):
                                 print(legalMoves)
                                 print(color)
                                 if isClickedState is False:
-                                    if graph.nodes[c][allowedMoves][color]:
-                                        print(f"Allowed moves are : {graph.nodes[c][allowedMoves][color]}")
+                                    if graph.nodes[c][ALLOWED_MOVES][color]:
+                                        print(f"Allowed moves are : {graph.nodes[c][ALLOWED_MOVES][color]}")
                                         isClickedState = True
-                                        legalMoves = graph.nodes[c][allowedMoves][color]
+                                        legalMoves = graph.nodes[c][ALLOWED_MOVES][color]
                                         clickedKey = c
                                 elif c in legalMoves.keys():
                                     finalElement = graph.move(clickedKey, 0, legalMoves[c][0], color)

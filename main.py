@@ -2,13 +2,13 @@ import sys
 
 from snapshot import *
 from graph import *
-from graphConstants import graphStack
+from graphConstants import GRAPH_STACK
 from player import Player
 
 def stackMove(graph,key,count,direction, interfaceTools):
     graph.move(key,count,direction)
-    drawChips(interfaceTools, graph.nodes[key][graphStack])
-    drawChips(interfaceTools, graph.nodes[direction(key)][graphStack])
+    drawChips(interfaceTools, graph.nodes[key][GRAPH_STACK])
+    drawChips(interfaceTools, graph.nodes[direction(key)][GRAPH_STACK])
 
 if __name__ == '__main__':
     n = prompt()
