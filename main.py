@@ -25,7 +25,7 @@ if __name__ == '__main__':
         #print(f"Node {key}: {value[neighborNodes]}, {value[graphStack]}")
 
     interfaceTools = InterfaceTools(n)
-    if mainBoard(graph, interfaceTools, whitePlayer, blackPlayer)=='WhiteWon':
+    if mainBoard(n, graph, interfaceTools, whitePlayer, blackPlayer)=='WhiteWon':
         print("White got the BYTE")
     else:
         print("Black got the BYTE")

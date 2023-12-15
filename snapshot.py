@@ -106,7 +106,7 @@ def swapColor(color):
     elif color == 'Black':
         return 'White'
 
-def mainBoard(graph, interfaceTools, whitePlayer, blackPlayer):
+def mainBoard(n, graph, interfaceTools, whitePlayer, blackPlayer):
     pg.init()
     screen = pg.display.set_mode((1280, 720))
     clock = pg.time.Clock()
@@ -171,17 +171,17 @@ def mainBoard(graph, interfaceTools, whitePlayer, blackPlayer):
                                     legalMoves = {}
                                     clickedKey = 0
                             c+=1
-        if whitePlayer.isWinner():
+        if whitePlayer.isWinner(n):
             return 'WhiteWon'
-        elif blackPlayer.isWinner():
+        elif blackPlayer.isWinner(n):
             return 'BlackWon'
         screen.fill((60, 70, 90))
         screen.blit(interfaceTools.background, (0, 0))
-        white_score_text = font.render(f"White: {whitePlayer.points}", True, (255, 255, 255))
-        black_score_text = font.render(f"Black: {blackPlayer.points}", True, (255, 255, 255))
-
-        screen.blit(white_score_text, (interfaceTools.width+100, 10))
-        screen.blit(black_score_text, (interfaceTools.width+100, 50))
+        whiteScore = font.render(f"White: {whitePlayer.points}", True, (255, 255, 255))
+        blackScore = font.render(f"Black: {blackPlayer.points}", True, (255, 255, 255))
+        # Stavi ko igra
+        screen.blit(whiteScore, (interfaceTools.width+100, 10))
+        screen.blit(blackScore, (interfaceTools.width+100, 50))
         pg.display.flip()
         clock.tick(60)
         playerTurn = not playerTurn
