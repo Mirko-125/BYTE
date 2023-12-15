@@ -113,7 +113,7 @@ def mainBoard(n, graph, interfaceTools, whitePlayer, blackPlayer):
     drawTable(graph,interfaceTools)
     running = True
     clickedKey = 0
-    legalMoves = {}
+    validMoves = {}
     color = 'White'
     isClickedState = False
     playerTurn = True # White = True | Black = False
@@ -139,7 +139,7 @@ def mainBoard(n, graph, interfaceTools, whitePlayer, blackPlayer):
                             if rect.collidepoint(mouse_x, mouse_y):
                                 #print("Starting coordinates:", x, y)
                                 #interfaceTools.background.blit(highlighter, (x - 10, y - 10), special_flags=pg.BLEND_RGBA_SUB)
-                                print(legalMoves)
+                                print(validMoves)
                                 print(color)
                                 for n in graph.nodes[c][allowedMoves][color].keys():
                                     interfaceTools.background.blit(interfaceTools.highlighter, (graph.nodes[n][graphStack].x, graph.nodes[n][graphStack].y))
@@ -147,13 +147,13 @@ def mainBoard(n, graph, interfaceTools, whitePlayer, blackPlayer):
                                     if graph.nodes[c][allowedMoves][color]:
                                         print(f"Allowed moves are : {graph.nodes[c][allowedMoves][color]}")
                                         isClickedState = True
-                                        legalMoves = graph.nodes[c][allowedMoves][color]
+                                        validMoves = graph.nodes[c][allowedMoves][color]
                                         clickedKey = c
-                                elif c in legalMoves.keys():
-                                    finalElement = graph.move(clickedKey, 0, legalMoves[c][0], color)
+                                elif c in validMoves.keys():
+                                    finalElement = graph.move(clickedKey, 0, validMoves[c][0], color)
                                     drawTable(graph,interfaceTools)
                                     isClickedState = False
-                                    legalMoves = {}
+                                    validMoves = {}
                                     clickedKey = 0
                                     color = swapColor(color)
                                     if finalElement == 'White':
@@ -168,9 +168,11 @@ def mainBoard(n, graph, interfaceTools, whitePlayer, blackPlayer):
                                         print(blackPlayer.points)
                                 elif c == clickedKey:
                                     isClickedState = False
-                                    legalMoves = {}
+                                    validMoves = {}
                                     clickedKey = 0
                             c+=1
+            elif event.type == pg.MOUSEBUTTONDOWN and event.button == 3 and isClickedState:
+                print("Milos je u pravu")
         if whitePlayer.isWinner(n):
             return 'WhiteWon'
         elif blackPlayer.isWinner(n):
