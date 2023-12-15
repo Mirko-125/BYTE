@@ -142,12 +142,12 @@ def mainBoard(n, graph, interfaceTools, whitePlayer, blackPlayer):
                                 print(validMoves)
                                 print(color)
                                 for n in graph.nodes[c][ALLOWED_MOVES][color].keys():
-                                    interfaceTools.background.blit(interfaceTools.highlighter, (graph.nodes[n][graphStack].x, graph.nodes[n][graphStack].y))
+                                    interfaceTools.background.blit(interfaceTools.highlighter, (graph.nodes[n][GRAPH_STACK].x, graph.nodes[n][GRAPH_STACK].y))
                                 if isClickedState is False:
                                     if graph.nodes[c][ALLOWED_MOVES][color]:
                                         print(f"Allowed moves are : {graph.nodes[c][ALLOWED_MOVES][color]}")
                                         isClickedState = True
-                                        legalMoves = graph.nodes[c][ALLOWED_MOVES][color]
+                                        validMoves = graph.nodes[c][ALLOWED_MOVES][color]
                                         clickedKey = c
                                 elif c in validMoves.keys():
                                     finalElement = graph.move(clickedKey, 0, validMoves[c][0], color)
