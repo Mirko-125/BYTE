@@ -184,6 +184,8 @@ def mainBoard(n, graph, interfaceTools, whitePlayer, blackPlayer):
         # Stavi ko igra
         screen.blit(whiteScore, (interfaceTools.width+100, 10))
         screen.blit(blackScore, (interfaceTools.width+100, 50))
+        onTheMove = font.render(f"{color} player is on the move.", True, (255, 255, 255))
+        screen.blit(onTheMove, (interfaceTools.width + 100, 100))
         pg.display.flip()
         clock.tick(60)
         playerTurn = not playerTurn
