@@ -105,6 +105,30 @@ def swapColor(color):
         return 'Black'
     elif color == 'Black':
         return 'White'
+    
+def cycleIndex(index, list):
+    if index+1 == len(list):
+        return 0
+    return index + 1
+
+def formSet(values):
+    indexSet = set()
+    for value in values:
+        for index in value[1][1]:
+            indexSet.add(index)
+    return list(indexSet)
+
+def indexInKeys(index, validMoves):
+    return index in validMoves[1]
+
+def resetState():
+    return {
+        'clickedKey' : 0,
+        'validMoves' : {},
+        'validIndexes' : [],
+        'selectedIndex' : 0,
+        'isClickedState' : False
+    }
 
 def mainBoard(n, graph, interfaceTools, whitePlayer, blackPlayer):
     pg.init()
@@ -114,7 +138,9 @@ def mainBoard(n, graph, interfaceTools, whitePlayer, blackPlayer):
     running = True
     clickedKey = 0
     validMoves = {}
+    validIndexes = []
     color = 'White'
+    selectedIndex = 0
     isClickedState = False
     playerTurn = True # White = True | Black = False
     font = pg.font.Font("./Assets/bahnschrift.ttf", 20)
@@ -125,7 +151,7 @@ def mainBoard(n, graph, interfaceTools, whitePlayer, blackPlayer):
             if event.type == pg.QUIT:
                 running = False
             elif event.type == pg.MOUSEBUTTONDOWN and event.button == 1:  # Left mouse button clicked
-                drawTable(graph, interfaceTools)
+                
                 mouse_x, mouse_y = pg.mouse.get_pos()
                 c = 1
                 for y in range(0, interfaceTools.height, interfaceTools.tileSize):
@@ -141,19 +167,24 @@ def mainBoard(n, graph, interfaceTools, whitePlayer, blackPlayer):
                                 #interfaceTools.background.blit(highlighter, (x - 10, y - 10), special_flags=pg.BLEND_RGBA_SUB)
                                 print(validMoves)
                                 print(color)
-                                for n in graph.nodes[c][ALLOWED_MOVES][color].keys():
-                                    interfaceTools.background.blit(interfaceTools.highlighter, (graph.nodes[n][GRAPH_STACK].x, graph.nodes[n][GRAPH_STACK].y))
+                               
                                 if isClickedState is False:
+                                    drawTable(graph, interfaceTools)
+                                    for n in graph.nodes[c][ALLOWED_MOVES][color].keys():
+                                        interfaceTools.background.blit(interfaceTools.highlighter, (graph.nodes[n][GRAPH_STACK].x, graph.nodes[n][GRAPH_STACK].y))
                                     if graph.nodes[c][ALLOWED_MOVES][color]:
                                         print(f"Allowed moves are : {graph.nodes[c][ALLOWED_MOVES][color]}")
                                         isClickedState = True
                                         validMoves = graph.nodes[c][ALLOWED_MOVES][color]
+                                        validIndexes = formSet(validMoves.items())
+                                        selectedIndex = 0
                                         clickedKey = c
-                                elif c in validMoves.keys():
-                                    finalElement = graph.move(clickedKey, 0, validMoves[c][0], color)
+                                elif c in validMoves.keys() and indexInKeys(validIndexes[selectedIndex], validMoves[c]):
+                                    finalElement = graph.move(clickedKey, validIndexes[selectedIndex], validMoves[c][0], color)
                                     drawTable(graph,interfaceTools)
                                     isClickedState = False
                                     validMoves = {}
+                                    validIndexes = []
                                     clickedKey = 0
                                     color = swapColor(color)
                                     if finalElement == 'White':
@@ -169,10 +200,20 @@ def mainBoard(n, graph, interfaceTools, whitePlayer, blackPlayer):
                                 elif c == clickedKey:
                                     isClickedState = False
                                     validMoves = {}
+                                    validIndexes = []
                                     clickedKey = 0
                             c+=1
             elif event.type == pg.MOUSEBUTTONDOWN and event.button == 3 and isClickedState:
-                print("Milos je u pravu")
+                #validni indeksi, i proslediti kljuceve za indeks koji bi se koristili za bojenje polja
+                print(selectedIndex)
+                drawTable(graph, interfaceTools)
+                for n in graph.nodes[clickedKey][ALLOWED_MOVES][color].keys():
+                    if indexInKeys(validIndexes[selectedIndex], validMoves[n]):
+                        interfaceTools.background.blit(interfaceTools.highlighter, (graph.nodes[n][GRAPH_STACK].x, graph.nodes[n][GRAPH_STACK].y))
+                selectedIndex = cycleIndex(selectedIndex, validIndexes)
+                
+                #drawTable(graph,interfaceTools, {clickedKey: validIndexes[selectedIndex]})
+                
         if whitePlayer.isWinner(n):
             return 'WhiteWon'
         elif blackPlayer.isWinner(n):

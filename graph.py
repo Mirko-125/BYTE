@@ -139,11 +139,25 @@ class Graph:
     
     def getMovesForPlayer(self, color):
         return {node: items for node in self.nodes if (len(items:=self.nodes[node][ALLOWED_MOVES][color]))}
+    
+    def setOnlyBottomIndex(self, key):
+        if not self.nodes[key][GRAPH_STACK].isEmpty():
+            if self.nodes[key][GRAPH_STACK].list[0] == 'Black':
+                for dstKey, value in self.nodes[key][ALLOWED_MOVES]['Black'].items():
+                    self.nodes[key][ALLOWED_MOVES]['Black'][dstKey] = (value[0], [0])
+                    self.nodes[key][ALLOWED_MOVES]['White'] = {}
+            else:
+                for dstKey, value in self.nodes[key][ALLOWED_MOVES]['White'].items():
+                    self.nodes[key][ALLOWED_MOVES]['White'][dstKey] = (value[0], [0])
+                    self.nodes[key][ALLOWED_MOVES]['Black'] = {}
 
     def updateValidMoves(self, key):
         closestDistance = self.BFS(key, self.N, key)
         moves = self.closestDirections(key, closestDistance)
         self.nodes[key][ALLOWED_MOVES] = self.parseMovesPerPlayer(moves, key)   # [(node, visina indexa)]
+        if (closestDistance > 1):
+            self.setOnlyBottomIndex(key)
+
    
     def closestDirections(self, key, maxDistance):
         return {
