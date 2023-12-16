@@ -132,7 +132,7 @@ def formSet(values):
 def indexInKeys(index, validMoves):
     return index in validMoves[1]
 
-def mainBoard(n, graph, interfaceTools, whitePlayer, blackPlayer):
+def mainBoard(SIZE, graph, interfaceTools, whitePlayer, blackPlayer):
     pg.init()
     screen = pg.display.set_mode((1280, 720))
     clock = pg.time.Clock()
@@ -210,9 +210,9 @@ def mainBoard(n, graph, interfaceTools, whitePlayer, blackPlayer):
                     if indexInKeys(validIndexes[selectedIndex], validMoves[n]):
                         interfaceTools.background.blit(interfaceTools.highlighter, (graph.nodes[n][GRAPH_STACK].x, graph.nodes[n][GRAPH_STACK].y))
                 
-        if whitePlayer.isWinner(n):
+        if whitePlayer.isWinner(SIZE):
             return 'WhiteWon'
-        elif blackPlayer.isWinner(n):
+        elif blackPlayer.isWinner(SIZE):
             return 'BlackWon'
         screen.fill((60, 70, 90))
         screen.blit(interfaceTools.background, (0, 0))
