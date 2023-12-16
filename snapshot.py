@@ -11,7 +11,7 @@ def drawChips(interfaceTools,stack):
         if len(stack.list) == 1:
             drawChip(interfaceTools, stack.x, stack.y - offset, element)
         else:
-            drawChip(interfaceTools,stack.x+random.randint(-2, 2),stack.y-offset,element)
+            drawChip(interfaceTools,stack.x,stack.y-offset,element)
         offset += 13
         
 def drawChip(interfaceTools,x,y,element):
@@ -20,6 +20,23 @@ def drawChip(interfaceTools,x,y,element):
     else:
         interfaceTools.background.blit(interfaceTools.whiteChip, (x,y))
 
+def drawSelectedChips(interfaceTools,stack,index):
+    offset = 0
+    for element, i in stack.list, range(stack.list): # for i in range(stack.list)
+        if index <= i:
+            offset+=13
+        elif index > i:
+            if len(stack.list) == 1: # if index < i
+                drawSelectedChip(interfaceTools, stack.x, stack.y - offset, element) #elif index >= i
+            else:                                                                    #boji
+                drawSelectedChip(interfaceTools, stack.x, stack.y - offset, element)
+            offset += 13
+
+def drawSelectedChip(interfaceTools,x,y,element):
+    if element == 'Black':
+        interfaceTools.background.blit(interfaceTools.blackChipSelected, (x,y))
+    else:
+        interfaceTools.background.blit(interfaceTools.whiteChipSelected, (x,y))
 
 import pygame as pg
 import sys
@@ -78,6 +95,8 @@ class InterfaceTools:
             cls._instance.tileSize = 75
             cls._instance.blackChip = loadAndScaleImage("./Assets/black-chip.png", (cls._instance.tileSize, cls._instance.tileSize))
             cls._instance.whiteChip = loadAndScaleImage("./Assets/white-chip.png", (cls._instance.tileSize, cls._instance.tileSize))
+            cls._instance.blackChipSelected = loadAndScaleImage("./Assets/black-chip-selected.png", (cls._instance.tileSize, cls._instance.tileSize))
+            cls._instance.whiteChipSelected = loadAndScaleImage("./Assets/white-chip-selected.png", (cls._instance.tileSize, cls._instance.tileSize))
             cls._instance.highlighter = loadAndScaleImage("./Assets/green.png", (cls._instance.tileSize, cls._instance.tileSize))
             cls._instance.width = n * cls._instance.tileSize
             cls._instance.height = n * cls._instance.tileSize
@@ -147,6 +166,7 @@ def mainBoard(n, graph, interfaceTools, whitePlayer, blackPlayer):
     font = pg.font.Font("./Assets/bahnschrift.ttf", 20)
     #highlighter = pg.Surface((interfaceTools.tileSize, interfaceTools.tileSize), pg.SRCALPHA)
     #highlighter.fill((0, 255, 0, 64))
+    index = 0
     while running:
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -223,7 +243,8 @@ def mainBoard(n, graph, interfaceTools, whitePlayer, blackPlayer):
         screen.blit(interfaceTools.background, (0, 0))
         whiteScore = font.render(f"White: {whitePlayer.points}", True, (255, 255, 255))
         blackScore = font.render(f"Black: {blackPlayer.points}", True, (255, 255, 255))
-        # Stavi ko igra
+        onTheMove = font.render(f"{color} player is on the move.", True, (255, 255, 255))
+        screen.blit(onTheMove, (interfaceTools.width + 100, 100))
         screen.blit(whiteScore, (interfaceTools.width+100, 10))
         screen.blit(blackScore, (interfaceTools.width+100, 50))
         onTheMove = font.render(f"{color} player is on the move.", True, (255, 255, 255))
