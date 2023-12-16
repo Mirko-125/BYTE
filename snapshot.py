@@ -1,9 +1,8 @@
 import itertools
 import pygame as pg
 import sys
-from graphConstants import * # graph ih vec poziva
+from graphConstants import * 
 from graph import *
-import random
 
 def drawChips(interfaceTools,stack, coloredIndex = None):
     offset = 0
@@ -12,7 +11,7 @@ def drawChips(interfaceTools,stack, coloredIndex = None):
             if len(stack.list) == 1:
                 drawChip(interfaceTools, stack.x, stack.y - offset, element)
             else:
-                drawChip(interfaceTools,stack.x,stack.y-offset,element)
+                drawChip(interfaceTools,stack.x,stack.y - offset,element)
         else:
             if len(stack.list) == 1:
                 drawSelectedChip(interfaceTools, stack.x, stack.y - offset, element)
@@ -20,20 +19,17 @@ def drawChips(interfaceTools,stack, coloredIndex = None):
                 drawSelectedChip(interfaceTools, stack.x, stack.y - offset, element)
         offset += 13
         
-def drawChip(interfaceTools,x,y,element):
+def drawChip(interfaceTools, x, y, element):
     if element == 'Black':
-        interfaceTools.background.blit(interfaceTools.blackChip, (x,y))
+        interfaceTools.background.blit(interfaceTools.blackChip, (x, y))
     else:
-        interfaceTools.background.blit(interfaceTools.whiteChip, (x,y))
+        interfaceTools.background.blit(interfaceTools.whiteChip, (x, y))
 
-def drawSelectedChip(interfaceTools,x,y,element):
+def drawSelectedChip(interfaceTools, x, y, element):
     if element == 'Black':
-        interfaceTools.background.blit(interfaceTools.blackChipSelected, (x,y))
+        interfaceTools.background.blit(interfaceTools.blackChipSelected, (x, y))
     else:
-        interfaceTools.background.blit(interfaceTools.whiteChipSelected, (x,y))
-
-import pygame as pg
-import sys
+        interfaceTools.background.blit(interfaceTools.whiteChipSelected, (x, y))
 
 def prompt():
     pg.init()
@@ -67,7 +63,6 @@ def prompt():
         inputRect = pg.Rect(50, 100, 200, 40)
         pg.draw.rect(screen, (255, 255, 255), inputRect, 2)
 
-        # Render and display input prompt with a default font
         promptText = regular_font.render("Board size NxN, N is:", True, (255, 255, 255))
         inputPrompt = regular_font.render(inputText, True, (255, 255, 255))
         screen.blit(promptText, (50, 50))
@@ -82,7 +77,7 @@ def loadAndScaleImage(imagePath, targetSize):
     return pg.transform.scale(image, targetSize)
 
 class InterfaceTools:
-    _instance = None  # Class variable to store the instance
+    _instance = None  
     def __new__(cls, n):
         if cls._instance is None:
             cls._instance = super(InterfaceTools, cls).__new__(cls)
@@ -97,24 +92,23 @@ class InterfaceTools:
             cls._instance.background = pg.Surface((cls._instance.width, cls._instance.height))
         return cls._instance
 
-def drawTable(graph,interfaceTools, specialChip = ( 0 , None )):
+def drawTable(graph,interfaceTools, specialChip = (0, None)):
     black = pg.Color(192, 192, 192)
     white = pg.Color(105, 105, 105)
     colors = itertools.cycle((white, black))
-    c = 1
+    key = 1
     for y in range(0, interfaceTools.height, interfaceTools.tileSize):
         for x in range(0, interfaceTools.width, interfaceTools.tileSize):
             rect = (x, y, interfaceTools.tileSize, interfaceTools.tileSize)
             pg.draw.rect(interfaceTools.background, next(colors), rect)
             if (x + y) % 2 == 0:
-                stackPointer = graph.nodes[c][GRAPH_STACK]  # graph[c][1]
+                stackPointer = graph.nodes[key][GRAPH_STACK]  
                 stackPointer.setCoordinates(x, y)
-                if specialChip[0] == c:
+                if specialChip[0] == key:
                     drawChips(interfaceTools, stackPointer, specialChip[1])
                 else:
                     drawChips(interfaceTools, stackPointer)
-                c += 1
-                # stack pointer spot
+                key += 1
         next(colors)
 
 def swapColor(color):
@@ -138,15 +132,6 @@ def formSet(values):
 def indexInKeys(index, validMoves):
     return index in validMoves[1]
 
-def resetState():
-    return {
-        'clickedKey' : 0,
-        'validMoves' : {},
-        'validIndexes' : [],
-        'selectedIndex' : 0,
-        'isClickedState' : False
-    }
-
 def mainBoard(n, graph, interfaceTools, whitePlayer, blackPlayer):
     pg.init()
     screen = pg.display.set_mode((1280, 720))
@@ -159,11 +144,7 @@ def mainBoard(n, graph, interfaceTools, whitePlayer, blackPlayer):
     color = 'White'
     selectedIndex = 0
     isClickedState = False
-    playerTurn = True # White = True | Black = False
     font = pg.font.Font("./Assets/bahnschrift.ttf", 20)
-    #highlighter = pg.Surface((interfaceTools.tileSize, interfaceTools.tileSize), pg.SRCALPHA)
-    #highlighter.fill((0, 255, 0, 64))
-    index = 0
     while running:
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -171,40 +152,40 @@ def mainBoard(n, graph, interfaceTools, whitePlayer, blackPlayer):
             elif event.type == pg.MOUSEBUTTONDOWN and event.button == 1:  # Left mouse button clicked
                 
                 mouse_x, mouse_y = pg.mouse.get_pos()
-                c = 1
+                key = 1
                 for y in range(0, interfaceTools.height, interfaceTools.tileSize):
                     for x in range(0, interfaceTools.width, interfaceTools.tileSize):
                         if (x+y) % 2 == 0:
                             rect = pg.Rect(x, y, interfaceTools.tileSize, interfaceTools.tileSize)
-
-                            stackPointer = graph.nodes[c][GRAPH_STACK]  # graph[c][1]
+                            stackPointer = graph.nodes[key][GRAPH_STACK] 
                             stackPointer.setCoordinates(x, y)
 
                             if rect.collidepoint(mouse_x, mouse_y):
-                                #print("Starting coordinates:", x, y)
-                                #interfaceTools.background.blit(highlighter, (x - 10, y - 10), special_flags=pg.BLEND_RGBA_SUB)
-                                print(validMoves)
-                                print(color)
-                               
                                 if isClickedState is False:
-                                    drawTable(graph, interfaceTools)
-                                    for n in graph.nodes[c][ALLOWED_MOVES][color].keys():
-                                        interfaceTools.background.blit(interfaceTools.highlighter, (graph.nodes[n][GRAPH_STACK].x, graph.nodes[n][GRAPH_STACK].y))
-                                    if graph.nodes[c][ALLOWED_MOVES][color]:
-                                        print(f"Allowed moves are : {graph.nodes[c][ALLOWED_MOVES][color]}")
+                                    if graph.nodes[key][ALLOWED_MOVES][color]:
+                                        print(f"Allowed moves are : {graph.nodes[key][ALLOWED_MOVES][color]}")
                                         isClickedState = True
-                                        validMoves = graph.nodes[c][ALLOWED_MOVES][color]
+                                        validMoves = graph.nodes[key][ALLOWED_MOVES][color]
                                         validIndexes = formSet(validMoves.items())
                                         selectedIndex = 0
-                                        clickedKey = c
-                                elif c in validMoves.keys() and indexInKeys(validIndexes[selectedIndex], validMoves[c]):
-                                    finalElement = graph.move(clickedKey, validIndexes[selectedIndex], validMoves[c][0], color)
+                                        clickedKey = key
+                                        drawTable(graph, interfaceTools, (clickedKey, validIndexes[selectedIndex]))
+                                        for n in graph.nodes[key][ALLOWED_MOVES][color].keys():
+                                            interfaceTools.background.blit(interfaceTools.highlighter, (graph.nodes[n][GRAPH_STACK].x, graph.nodes[n][GRAPH_STACK].y))
+
+                                elif key in validMoves.keys() and indexInKeys(validIndexes[selectedIndex], validMoves[key]):
+                                    finalElement = graph.move(clickedKey, validIndexes[selectedIndex], validMoves[key][0], color)
                                     drawTable(graph,interfaceTools)
                                     isClickedState = False
                                     validMoves = {}
                                     validIndexes = []
                                     clickedKey = 0
-                                    color = swapColor(color)
+                                    if graph.getMovesForPlayer(swapColor(color)):
+                                        color = swapColor(color)
+                                    elif not graph.getMovesForPlayer(color):
+                                        print("NO VALID MOVES REMAIN, GAME CLOSING")
+                                        pg.quit()
+                                        sys.exit()
                                     if finalElement == 'White':
                                         print('White got the stack')
                                         whitePlayer.addPoints(1)
@@ -215,23 +196,19 @@ def mainBoard(n, graph, interfaceTools, whitePlayer, blackPlayer):
                                         blackPlayer.addPoints(1)
                                         print("Black player: ")
                                         print(blackPlayer.points)
-                                elif c == clickedKey:
+                                elif key == clickedKey:
                                     isClickedState = False
                                     validMoves = {}
                                     validIndexes = []
                                     clickedKey = 0
-                                    drawTable(graph,interfaceTools)
-                            c+=1
+                                    drawTable(graph, interfaceTools)
+                            key+=1
             elif event.type == pg.MOUSEBUTTONDOWN and event.button == 3 and isClickedState:
-                #validni indeksi, i proslediti kljuceve za indeks koji bi se koristili za bojenje polja
-                print(selectedIndex)
                 selectedIndex = cycleIndex(selectedIndex, validIndexes)
                 drawTable(graph,interfaceTools, (clickedKey, validIndexes[selectedIndex]))
                 for n in graph.nodes[clickedKey][ALLOWED_MOVES][color].keys():
                     if indexInKeys(validIndexes[selectedIndex], validMoves[n]):
                         interfaceTools.background.blit(interfaceTools.highlighter, (graph.nodes[n][GRAPH_STACK].x, graph.nodes[n][GRAPH_STACK].y))
-
-
                 
         if whitePlayer.isWinner(n):
             return 'WhiteWon'
@@ -243,12 +220,11 @@ def mainBoard(n, graph, interfaceTools, whitePlayer, blackPlayer):
         blackScore = font.render(f"Black: {blackPlayer.points}", True, (255, 255, 255))
         onTheMove = font.render(f"{color} player is on the move.", True, (255, 255, 255))
         screen.blit(onTheMove, (interfaceTools.width + 100, 100))
-        screen.blit(whiteScore, (interfaceTools.width+100, 10))
-        screen.blit(blackScore, (interfaceTools.width+100, 50))
+        screen.blit(whiteScore, (interfaceTools.width + 100, 10))
+        screen.blit(blackScore, (interfaceTools.width + 100, 50))
         onTheMove = font.render(f"{color} player is on the move.", True, (255, 255, 255))
         screen.blit(onTheMove, (interfaceTools.width + 100, 100))
         pg.display.flip()
         clock.tick(60)
-        playerTurn = not playerTurn
     pg.quit()
     sys.exit()

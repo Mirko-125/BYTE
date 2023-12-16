@@ -7,9 +7,6 @@ class Player:
         self.points += points
 
     def isWinner(self, n):
-        #8-2
-        #10-3
-        #16-5
         if n == 8:
             return self.points >= 2
         elif n == 10:

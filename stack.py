@@ -1,6 +1,3 @@
-from piece import Piece
-
-
 class Stack:
     def __init__(self, element):
         self.x = 0
@@ -11,7 +8,7 @@ class Stack:
     def add(self, elements: list):
         combinedLength = len(self.list) + len(elements)
         if combinedLength > 8:
-            return "Unable to overexceed 8 elements"
+            raise ValueError("Length over 8 is not allowed")
         self.list.extend(elements)
         if combinedLength == 8:
             finalElement = self.list.pop()

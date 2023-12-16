@@ -3,7 +3,6 @@ from stack import Stack
 import copy
 from graphConstants import *
 
-
 class Graph:
     def __init__(self, N):
         self.N = N
@@ -154,11 +153,10 @@ class Graph:
     def updateValidMoves(self, key):
         closestDistance = self.BFS(key, self.N, key)
         moves = self.closestDirections(key, closestDistance)
-        self.nodes[key][ALLOWED_MOVES] = self.parseMovesPerPlayer(moves, key)   # [(node, visina indexa)]
+        self.nodes[key][ALLOWED_MOVES] = self.parseMovesPerPlayer(moves, key)
         if (closestDistance > 1):
             self.setOnlyBottomIndex(key)
 
-   
     def closestDirections(self, key, maxDistance):
         return {
             direction(key): direction
@@ -254,11 +252,6 @@ class Graph:
         return stateList
 
     def possibleStates(self):
-        l = self.parsePossibleStatesPerPlayer('White')
-        l.extend(self.parsePossibleStatesPerPlayer('Black'))
-        #.extend(self.parsePossibleStatesPerPlayer('Black'))
-        return l
-    #for key, items in graph.getMovesForPlayer('White'):
-    #    for index in items[1]:
-    #        stateList += newState(graph, key, index, items[0], 'White') 
-    #return stateList
+        stateList = self.parsePossibleStatesPerPlayer('White')
+        stateList.extend(self.parsePossibleStatesPerPlayer('Black'))
+        return stateList
