@@ -5,13 +5,19 @@ from graphConstants import * # graph ih vec poziva
 from graph import *
 import random
 
-def drawChips(interfaceTools,stack):
+def drawChips(interfaceTools,stack, coloredIndex = None):
     offset = 0
-    for element in stack.list:
-        if len(stack.list) == 1:
-            drawChip(interfaceTools, stack.x, stack.y - offset, element)
+    for index, element in enumerate(stack.list):
+        if coloredIndex is None or index < coloredIndex:
+            if len(stack.list) == 1:
+                drawChip(interfaceTools, stack.x, stack.y - offset, element)
+            else:
+                drawChip(interfaceTools,stack.x,stack.y-offset,element)
         else:
-            drawChip(interfaceTools,stack.x,stack.y-offset,element)
+            if len(stack.list) == 1:
+                drawSelectedChip(interfaceTools, stack.x, stack.y - offset, element)
+            else:
+                drawSelectedChip(interfaceTools, stack.x, stack.y - offset, element)
         offset += 13
         
 def drawChip(interfaceTools,x,y,element):
@@ -19,18 +25,6 @@ def drawChip(interfaceTools,x,y,element):
         interfaceTools.background.blit(interfaceTools.blackChip, (x,y))
     else:
         interfaceTools.background.blit(interfaceTools.whiteChip, (x,y))
-
-def drawSelectedChips(interfaceTools,stack,index):
-    offset = 0
-    for element, i in stack.list, range(stack.list): # for i in range(stack.list)
-        if index <= i:
-            offset+=13
-        elif index > i:
-            if len(stack.list) == 1: # if index < i
-                drawSelectedChip(interfaceTools, stack.x, stack.y - offset, element) #elif index >= i
-            else:                                                                    #boji
-                drawSelectedChip(interfaceTools, stack.x, stack.y - offset, element)
-            offset += 13
 
 def drawSelectedChip(interfaceTools,x,y,element):
     if element == 'Black':
@@ -103,7 +97,7 @@ class InterfaceTools:
             cls._instance.background = pg.Surface((cls._instance.width, cls._instance.height))
         return cls._instance
 
-def drawTable(graph,interfaceTools):
+def drawTable(graph,interfaceTools, specialChip = ( 0 , None )):
     black = pg.Color(192, 192, 192)
     white = pg.Color(105, 105, 105)
     colors = itertools.cycle((white, black))
@@ -115,7 +109,10 @@ def drawTable(graph,interfaceTools):
             if (x + y) % 2 == 0:
                 stackPointer = graph.nodes[c][GRAPH_STACK]  # graph[c][1]
                 stackPointer.setCoordinates(x, y)
-                drawChips(interfaceTools, stackPointer)
+                if specialChip[0] == c:
+                    drawChips(interfaceTools, stackPointer, specialChip[1])
+                else:
+                    drawChips(interfaceTools, stackPointer)
                 c += 1
                 # stack pointer spot
         next(colors)
@@ -223,17 +220,18 @@ def mainBoard(n, graph, interfaceTools, whitePlayer, blackPlayer):
                                     validMoves = {}
                                     validIndexes = []
                                     clickedKey = 0
+                                    drawTable(graph,interfaceTools)
                             c+=1
             elif event.type == pg.MOUSEBUTTONDOWN and event.button == 3 and isClickedState:
                 #validni indeksi, i proslediti kljuceve za indeks koji bi se koristili za bojenje polja
                 print(selectedIndex)
-                drawTable(graph, interfaceTools)
+                selectedIndex = cycleIndex(selectedIndex, validIndexes)
+                drawTable(graph,interfaceTools, (clickedKey, validIndexes[selectedIndex]))
                 for n in graph.nodes[clickedKey][ALLOWED_MOVES][color].keys():
                     if indexInKeys(validIndexes[selectedIndex], validMoves[n]):
                         interfaceTools.background.blit(interfaceTools.highlighter, (graph.nodes[n][GRAPH_STACK].x, graph.nodes[n][GRAPH_STACK].y))
-                selectedIndex = cycleIndex(selectedIndex, validIndexes)
-                
-                #drawTable(graph,interfaceTools, {clickedKey: validIndexes[selectedIndex]})
+
+
                 
         if whitePlayer.isWinner(n):
             return 'WhiteWon'
