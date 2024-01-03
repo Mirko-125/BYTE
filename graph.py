@@ -1,6 +1,7 @@
 from piece import Piece
 from stack import Stack
 import copy
+import sys
 from graphConstants import *
 
 class Graph:
@@ -10,6 +11,8 @@ class Graph:
         self.size = int(N ** 2 / 2)
         self.offset = int(N / 2)
         self.oddRange = set()
+        self.whitePoints = 0
+        self.blackPoints = 0
         self.validDirections = [self.UR, self.UL, self.DL, self.DR]
         for number in range(1, int(N / 2 + 1)):
             self.oddRange.add(number)
@@ -40,6 +43,49 @@ class Graph:
         if (K % self.N in self.oddRange):
             return True
         return False
+    
+    def addPoints(self, color):
+        if not color:
+            return
+        if color == 'White':
+            self.whitePoints += 1
+        else:
+            self.blackPoints += 1
+
+    def findMaxHeight(self):
+        maxSize = 0
+        for node in self.nodes:
+            nodeLength = self.nodes[node][GRAPH_STACK].length()
+            if nodeLength > maxSize:
+                maxSize = nodeLength
+        return maxSize
+
+    def findStacksFromHeight(self, height):
+        return [self.nodes[node][GRAPH_STACK] for node in self.nodes if self.nodes[node][GRAPH_STACK].length() == height]
+
+    def getPlayerPoints(self, color):
+        if color == 'White':
+            return self.whitePoints
+        return self.blackPoints
+
+    def winConPoints(self):
+        if self.N == 8:
+            return 2
+        if self.N == 10:
+            return 3
+        return 8
+
+    def checkWinner(self):
+        if self.whitePoints >= self.winConPoints():
+            return (True, 'White')
+        if self.blackPoints >= self.winConPoints():
+            return (True, 'Black')
+        return (False, '')
+
+    def boolToColor(self, bool):
+        if bool:
+            return 'White'
+        return 'Black'
 
     def oppositeDirection(self, direction_func):
         if direction_func == self.UL:
@@ -214,7 +260,7 @@ class Graph:
                     if (neighborNode not in visited):
                         queue.append(neighborNode)
             distance += 1
-        return False
+        return False 
     
     def isValidMove(self, key, dstKey, index, color):
         if dstKey in self.nodes[key][ALLOWED_MOVES][color]:
@@ -235,11 +281,31 @@ class Graph:
             return topElement
         return False
     
+    def stateEvaluation(self):
+        winner = self.checkWinner()
+        if winner[0]:
+            if winner[1] == "White":
+                return sys.maxsize
+            else:
+                return -sys.maxsize
+        else: 
+            elementCounter = 0
+            for key in self.nodes:
+                stack = self.nodes[key][GRAPH_STACK]
+                value = stack.length()
+                if stack.getTopElement() == "Black":
+                    value = -value
+                elementCounter += value
+            return 5 * (self.whitePoints - self.blackPoints) + elementCounter
+        
+            
     def newState(self, key, index, direction, color):
         newState = copy.deepcopy(self)
         matched_direction = newState.matchFuncToCopy(direction)
-        newState.move(key, index, matched_direction, color)
+        topElement = newState.move(key, index, matched_direction, color)
+        newState.addPoints(topElement)
         return newState
+    
     
     def parsePossibleStatesPerPlayer(self, color):
         stateList = []
@@ -248,10 +314,52 @@ class Graph:
             for _, items in moves.items():
                 direction, indexes = items
                 for index in indexes:
-                    stateList.append(self.newState(key, index, direction, color))
+                    stateList.append((self.newState(key, index, direction, color), (key, index, direction, color)))
         return stateList
 
     def possibleStates(self):
         stateList = self.parsePossibleStatesPerPlayer('White')
         stateList.extend(self.parsePossibleStatesPerPlayer('Black'))
         return stateList
+    
+    def bestMove(self, color):
+        stateList = self.parsePossibleStatesPerPlayer(color)
+        maxValue = -sys.maxsize
+        minValue = sys.maxsize
+
+        for stateTuple in stateList:
+            value = minMax(stateTuple[0], MAX_DEPTH, -sys.maxsize, sys.maxsize, color == "White")
+            if value > maxValue:
+                maxValue = value
+                bestMoveWhite = stateTuple[1]
+            if value < minValue:
+                minValue = value
+                bestMoveBlack = stateTuple[1]
+
+        if color == "White":
+            return bestMoveWhite
+        return bestMoveBlack
+    
+
+def minMax(graph, depth, alpha, beta, isWhitePlayer):
+    if depth == 0 or graph.checkWinner()[0]:
+        return graph.stateEvaluation()
+    
+    if isWhitePlayer:
+        maxEval = -sys.maxsize
+        for state in graph.parsePossibleStatesPerPlayer("White"):
+            eval = minMax(state[0], depth - 1, alpha, beta, False)
+            maxEval = max(eval, maxEval)
+            alpha = max(alpha, eval)
+            if beta <= alpha:
+                break
+        return maxEval
+    
+    minEval = sys.maxsize
+    for state in graph.parsePossibleStatesPerPlayer("Black"):
+        eval = minMax(state[0], depth - 1, alpha, beta, True)
+        minEval = min(minEval, eval)
+        beta = min(beta, eval)
+        if beta <= alpha:
+            break
+    return minEval

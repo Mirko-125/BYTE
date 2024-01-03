@@ -1,6 +1,7 @@
 import itertools
 import pygame as pg
 import sys
+import time
 from graphConstants import * 
 from graph import *
 
@@ -38,7 +39,11 @@ def prompt():
     pg.display.set_caption("BYTE | Set your dimensions")
     regular_font = pg.font.Font(None, 36)
     techy_font = pg.font.Font(None, 24)
+    checkbox_font = pg.font.Font(None, 24)
+
     inputText = ""
+    checkbox_checked = True  # Default to checked
+
     while True:
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -50,24 +55,39 @@ def prompt():
                         number = int(inputText)
                         if number in [8, 10, 16]:
                             pg.quit()
-                            return number
+                            return number, checkbox_checked
                         else:
                             inputText = ""
                     except ValueError:
                         inputText = ""
                 elif event.key == pg.K_BACKSPACE:
                     inputText = inputText[:-1]
-                else:
-                    inputText += event.unicode
+            elif event.type == pg.MOUSEBUTTONDOWN:
+                if 250 <= event.pos[0] <= 270 and 150 <= event.pos[1] <= 170:
+                    checkbox_checked = not checkbox_checked
+            elif event.type == pg.TEXTINPUT:
+                inputText += event.text
+
         screen.fill((60, 70, 90))
-        inputRect = pg.Rect(50, 100, 200, 40)
+        inputRect = pg.Rect(50, 100, 250, 40)
         pg.draw.rect(screen, (255, 255, 255), inputRect, 2)
 
         promptText = regular_font.render("Board size NxN, N is:", True, (255, 255, 255))
         inputPrompt = regular_font.render(inputText, True, (255, 255, 255))
         screen.blit(promptText, (50, 50))
         screen.blit(inputPrompt, (55, 105))
-        techyText = techy_font.render("Made by: Mirko Bojanić 18087, Miloš Miljković 19040, Nemanja Stanković 18391", True, (80, 90, 110))
+
+        checkbox_rect = pg.Rect(250, 150, 20, 20) 
+        pg.draw.rect(screen, (255, 255, 255), checkbox_rect, 2)
+        if checkbox_checked:
+            pg.draw.line(screen, (255, 255, 255), (250, 150), (270, 170), 2)
+            pg.draw.line(screen, (255, 255, 255), (270, 150), (250, 170), 2)
+
+        checkbox_label = checkbox_font.render("Do you want to play first?", True, (255, 255, 255))
+        screen.blit(checkbox_label, (50, 150))
+
+        techyText = techy_font.render("Made by: Mirko Bojanić 18087, Miloš Miljković 19040, Nemanja Stanković 18391", True,
+                                      (80, 90, 110))
         screen.blit(techyText, (20, windowSize[1] - 40))
 
         pg.display.flip()
@@ -132,7 +152,7 @@ def formSet(values):
 def indexInKeys(index, validMoves):
     return index in validMoves[1]
 
-def mainBoard(SIZE, graph, interfaceTools, whitePlayer, blackPlayer):
+def mainBoard(SIZE, graph, interfaceTools, whitePlayer, blackPlayer, playerFirst):
     pg.init()
     screen = pg.display.set_mode((1280, 720))
     clock = pg.time.Clock()
@@ -163,7 +183,7 @@ def mainBoard(SIZE, graph, interfaceTools, whitePlayer, blackPlayer):
                             if rect.collidepoint(mouse_x, mouse_y):
                                 if isClickedState is False:
                                     if graph.nodes[key][ALLOWED_MOVES][color]:
-                                        print(f"Allowed moves are : {graph.nodes[key][ALLOWED_MOVES][color]}")
+                                        #print(f"Allowed moves are : {graph.nodes[key][ALLOWED_MOVES][color]}")
                                         isClickedState = True
                                         validMoves = graph.nodes[key][ALLOWED_MOVES][color]
                                         validIndexes = formSet(validMoves.items())
@@ -175,17 +195,21 @@ def mainBoard(SIZE, graph, interfaceTools, whitePlayer, blackPlayer):
 
                                 elif key in validMoves.keys() and indexInKeys(validIndexes[selectedIndex], validMoves[key]):
                                     finalElement = graph.move(clickedKey, validIndexes[selectedIndex], validMoves[key][0], color)
+                                    
                                     drawTable(graph,interfaceTools)
+                                    time.sleep(1)
                                     isClickedState = False
                                     validMoves = {}
                                     validIndexes = []
                                     clickedKey = 0
+                                    
                                     if graph.getMovesForPlayer(swapColor(color)):
                                         color = swapColor(color)
                                     elif not graph.getMovesForPlayer(color):
                                         print("NO VALID MOVES REMAIN, GAME CLOSING")
                                         pg.quit()
                                         sys.exit()
+
                                     if finalElement == 'White':
                                         print('White got the stack')
                                         whitePlayer.addPoints(1)
@@ -196,6 +220,12 @@ def mainBoard(SIZE, graph, interfaceTools, whitePlayer, blackPlayer):
                                         blackPlayer.addPoints(1)
                                         print("Black player: ")
                                         print(blackPlayer.points)
+
+                                    AIkey, AIindex, AIdirection, AIcolor = graph.bestMove(color)
+                                    graph.move(AIkey, AIindex, AIdirection, AIcolor)
+                                    drawTable(graph,interfaceTools)
+                                    color = swapColor(color)
+
                                 elif key == clickedKey:
                                     isClickedState = False
                                     validMoves = {}

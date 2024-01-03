@@ -15,6 +15,11 @@ class Stack:
             self.list.clear()
             return finalElement
         return 0
+    
+    def getTopElement(self):
+        if self.isEmpty():
+            return None
+        return self.list[self.length() - 1]
 
     def getSizeFromIndex(self, index):
         return self.length() - index
