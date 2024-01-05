@@ -1,7 +1,7 @@
 import itertools
 import pygame as pg
 import sys
-import time
+import threading
 from graphConstants import * 
 from graph import *
 
@@ -130,6 +130,7 @@ def drawTable(graph,interfaceTools, specialChip = (0, None)):
                     drawChips(interfaceTools, stackPointer)
                 key += 1
         next(colors)
+    pg.display.update()
 
 def swapColor(color):
     if color == 'White':
@@ -152,19 +153,47 @@ def formSet(values):
 def indexInKeys(index, validMoves):
     return index in validMoves[1]
 
+
+def addPoints(finalElement, whitePlayer, blackPlayer):
+    if finalElement == 'White':
+        print('White got the stack')
+        whitePlayer.addPoints(1)
+        print("White player: ")
+        print(whitePlayer.points)
+    elif finalElement == 'Black':
+        print('Black got the stack')
+        blackPlayer.addPoints(1)
+        print("Black player: ")
+        print(blackPlayer.points)
+
 def mainBoard(SIZE, graph, interfaceTools, whitePlayer, blackPlayer, playerFirst):
     pg.init()
+
+    def compute_best_move():
+        AIkey, AIindex, AIdirection, AIcolor = graph.bestMove(color)
+        finalElement = graph.move(AIkey, AIindex, AIdirection, AIcolor)
+        addPoints(finalElement, whitePlayer, blackPlayer)
+        
     screen = pg.display.set_mode((1280, 720))
     clock = pg.time.Clock()
-    drawTable(graph,interfaceTools)
+    
     running = True
     clickedKey = 0
     validMoves = {}
     validIndexes = []
     color = 'White'
+    if not playerFirst:
+        bestMoveThread = threading.Thread(target=compute_best_move())
+        bestMoveThread.start()
+        bestMoveThread.join()
+        color = 'Black'
+    drawTable(graph,interfaceTools)
     selectedIndex = 0
     isClickedState = False
     font = pg.font.Font("./Assets/bahnschrift.ttf", 20)
+
+   
+
     while running:
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -195,34 +224,28 @@ def mainBoard(SIZE, graph, interfaceTools, whitePlayer, blackPlayer, playerFirst
 
                                 elif key in validMoves.keys() and indexInKeys(validIndexes[selectedIndex], validMoves[key]):
                                     finalElement = graph.move(clickedKey, validIndexes[selectedIndex], validMoves[key][0], color)
+                                    drawTable(graph, interfaceTools)
                                     
-                                    drawTable(graph,interfaceTools)
-                                    time.sleep(1)
-                                    isClickedState = False
-                                    validMoves = {}
-                                    validIndexes = []
-                                    clickedKey = 0
-                                    
-                                    if graph.getMovesForPlayer(swapColor(color)):
+                                    if graph.canPlayerMove(swapColor(color)):
                                         color = swapColor(color)
-                                    elif not graph.getMovesForPlayer(color):
+                                    elif not graph.canPlayerMove(color) and graph.checkWinner()[0]:
                                         print("NO VALID MOVES REMAIN, GAME CLOSING")
                                         pg.quit()
                                         sys.exit()
 
-                                    if finalElement == 'White':
-                                        print('White got the stack')
-                                        whitePlayer.addPoints(1)
-                                        print("White player: ")
-                                        print(whitePlayer.points)
-                                    elif finalElement == 'Black':
-                                        print('Black got the stack')
-                                        blackPlayer.addPoints(1)
-                                        print("Black player: ")
-                                        print(blackPlayer.points)
+                                    addPoints(finalElement, whitePlayer, blackPlayer)
+                                    while not graph.checkWinner()[0]:
+                                        bestMoveThread = threading.Thread(target=compute_best_move())
+                                        bestMoveThread.start()
+                                        bestMoveThread.join()
+                                        if graph.canPlayerMove(swapColor(color)):
+                                           break 
+                                    
+                                    isClickedState = False
+                                    validMoves = {}
+                                    validIndexes = []
+                                    clickedKey = 0
 
-                                    AIkey, AIindex, AIdirection, AIcolor = graph.bestMove(color)
-                                    graph.move(AIkey, AIindex, AIdirection, AIcolor)
                                     drawTable(graph,interfaceTools)
                                     color = swapColor(color)
 

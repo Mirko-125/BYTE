@@ -13,4 +13,4 @@ if __name__ == '__main__':
     if mainBoard(n, graph, interfaceTools, whitePlayer, blackPlayer, playerFirst)=='WhiteWon':
         print("White got the BYTE")
     else:
-        print("Black got the BYTE")
+        print("Black got the BYTE") 

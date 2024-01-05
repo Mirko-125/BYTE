@@ -1,5 +1,6 @@
 from piece import Piece
 from stack import Stack
+import random
 import copy
 import sys
 from graphConstants import *
@@ -11,6 +12,9 @@ class Graph:
         self.size = int(N ** 2 / 2)
         self.offset = int(N / 2)
         self.oddRange = set()
+        self.canWhiteMove = False
+        self.canBlackMove = False
+        self.turn = 0
         self.whitePoints = 0
         self.blackPoints = 0
         self.validDirections = [self.UR, self.UL, self.DL, self.DR]
@@ -182,6 +186,12 @@ class Graph:
                 return True
         return False
     
+    def findOneMove(self, color):
+        for node in self.nodes:
+            if (len(self.nodes[node][ALLOWED_MOVES][color])):
+                return True
+        return False
+    
     def getMovesForPlayer(self, color):
         return {node: items for node in self.nodes if (len(items:=self.nodes[node][ALLOWED_MOVES][color]))}
     
@@ -202,6 +212,10 @@ class Graph:
         self.nodes[key][ALLOWED_MOVES] = self.parseMovesPerPlayer(moves, key)
         if (closestDistance > 1):
             self.setOnlyBottomIndex(key)
+        if self.nodes[key][ALLOWED_MOVES]["Black"]:
+            self.canBlackMove = True
+        if self.nodes[key][ALLOWED_MOVES]["White"]:
+            self.canBlackMove = True
 
     def closestDirections(self, key, maxDistance):
         return {
@@ -216,9 +230,9 @@ class Graph:
         }
 
     def nodesToUpdate(self, srcKey, dstKey):
-        visited = {0}
+        visited = {srcKey, dstKey}
         queue = [srcKey, dstKey]
-        toUpdateList = []
+        toUpdateList = [srcKey, dstKey]
         while (len(queue) > 0):
             iteration = len(queue)
             for _ in range(iteration):
@@ -240,6 +254,8 @@ class Graph:
             self.updateValidMoves(srcKey)
         if self.nodes[dstKey][GRAPH_STACK].isEmpty():
             self.updateValidMoves(dstKey)
+        self.canBlackMove = self.findOneMove('Black')
+        self.canWhiteMove = self.findOneMove('White')
 
     def BFS(self, key, maxDistance, src=0):
         visited = {src}
@@ -262,6 +278,12 @@ class Graph:
             distance += 1
         return False 
     
+    def canPlayerMove(self, color):
+        if color == "Black":
+            return self.canBlackMove
+        if color == "White":
+            return self.canWhiteMove
+    
     def isValidMove(self, key, dstKey, index, color):
         if dstKey in self.nodes[key][ALLOWED_MOVES][color]:
             if index in self.nodes[key][ALLOWED_MOVES][color][dstKey][1]:
@@ -273,10 +295,11 @@ class Graph:
         self.validateStack(key)
         if not self.validateDirection(direction, key):
             raise ValueError("Invalid direction")
-
+        self.turn += 1
         dstKey = direction(key)
         if (self.isValidMove(key, dstKey, index, color)):
             topElement = self.nodes[dstKey][GRAPH_STACK].add(self.nodes[key][GRAPH_STACK].pop(index))
+            self.addPoints(topElement)
             self.updateState(key, dstKey)
             return topElement
         return False
@@ -288,22 +311,26 @@ class Graph:
                 return sys.maxsize
             else:
                 return -sys.maxsize
-        else: 
+        else:
             elementCounter = 0
+            if not self.canBlackMove:
+                elementCounter += 5
+            if not self.canWhiteMove:
+                elementCounter -= 5
+
             for key in self.nodes:
                 stack = self.nodes[key][GRAPH_STACK]
                 value = stack.length()
                 if stack.getTopElement() == "Black":
                     value = -value
                 elementCounter += value
-            return 5 * (self.whitePoints - self.blackPoints) + elementCounter
+            return 15 * (self.whitePoints - self.blackPoints) + elementCounter
         
             
     def newState(self, key, index, direction, color):
         newState = copy.deepcopy(self)
         matched_direction = newState.matchFuncToCopy(direction)
-        topElement = newState.move(key, index, matched_direction, color)
-        newState.addPoints(topElement)
+        newState.move(key, index, matched_direction, color)
         return newState
     
     
@@ -314,7 +341,9 @@ class Graph:
             for _, items in moves.items():
                 direction, indexes = items
                 for index in indexes:
-                    stateList.append((self.newState(key, index, direction, color), (key, index, direction, color)))
+                    state = self.newState(key, index, direction, color)
+                    evaluatedPosition = state.stateEvaluation()
+                    stateList.append((state, (key, index, direction, color), evaluatedPosition))
         return stateList
 
     def possibleStates(self):
@@ -323,12 +352,30 @@ class Graph:
         return stateList
     
     def bestMove(self, color):
-        stateList = self.parsePossibleStatesPerPlayer(color)
+        depth = MAX_DEPTH
+        valueCount = 5
+        maxHeight = self.findMaxHeight()
+        if self.turn < 12 and maxHeight < 4:
+            depth -= 1
+        else:
+            valueCount = 10
+
+        sortedStateList = sorted(self.parsePossibleStatesPerPlayer(color), key=lambda x: x[2], reverse = (color == "White"))
+        if len(sortedStateList) < 10:
+            depth += 1
+
+        stateList = sortedStateList[:valueCount]
+        if maxHeight > 5:
+            stateList.extend(stateList[:-valueCount])
+
         maxValue = -sys.maxsize
         minValue = sys.maxsize
+        bestMoveWhite = bestMoveBlack = stateList[0][1]
 
         for stateTuple in stateList:
-            value = minMax(stateTuple[0], MAX_DEPTH, -sys.maxsize, sys.maxsize, color == "White")
+            if self.turn < 5:
+                return stateList[random.randint(1, len(stateList) - 1)][1]
+            value = minMax(stateTuple[0], depth, -sys.maxsize, sys.maxsize, color == "White")
             if value > maxValue:
                 maxValue = value
                 bestMoveWhite = stateTuple[1]
