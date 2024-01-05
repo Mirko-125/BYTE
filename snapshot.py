@@ -169,7 +169,7 @@ def addPoints(finalElement, whitePlayer, blackPlayer):
 def mainBoard(SIZE, graph, interfaceTools, whitePlayer, blackPlayer, playerFirst):
     pg.init()
 
-    def compute_best_move():
+    def computeBestMove():
         AIkey, AIindex, AIdirection, AIcolor = graph.bestMove(color)
         finalElement = graph.move(AIkey, AIindex, AIdirection, AIcolor)
         addPoints(finalElement, whitePlayer, blackPlayer)
@@ -183,7 +183,7 @@ def mainBoard(SIZE, graph, interfaceTools, whitePlayer, blackPlayer, playerFirst
     validIndexes = []
     color = 'White'
     if not playerFirst:
-        bestMoveThread = threading.Thread(target=compute_best_move())
+        bestMoveThread = threading.Thread(target=computeBestMove())
         bestMoveThread.start()
         bestMoveThread.join()
         color = 'Black'
@@ -235,7 +235,7 @@ def mainBoard(SIZE, graph, interfaceTools, whitePlayer, blackPlayer, playerFirst
 
                                     addPoints(finalElement, whitePlayer, blackPlayer)
                                     while not graph.checkWinner()[0]:
-                                        bestMoveThread = threading.Thread(target=compute_best_move())
+                                        bestMoveThread = threading.Thread(target=computeBestMove())
                                         bestMoveThread.start()
                                         bestMoveThread.join()
                                         if graph.canPlayerMove(swapColor(color)):
